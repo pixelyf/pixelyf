@@ -1,0 +1,27 @@
+{
+  "name": "pixelyf-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@pixelyf/web",
+    "mobile": "npm run start --workspace=@pixelyf/mobile",
+    "build": "npm run build --workspace=@pixelyf/web",
+    "start": "npm run start --workspace=@pixelyf/web --",
+    "db:generate": "cd apps/web && npx prisma generate",
+    "db:push": "cd apps/web && npx prisma db push",
+    "db:seed": "cd apps/web && npx prisma db seed"
+  },
+  "dependencies": {
+    "graphology": "^0.26.0",
+    "graphology-communities-louvain": "^2.0.2",
+    "graphology-types": "^0.24.8"
+  },
+  "devDependencies": {
+    "eslint-config-next": "16.2.1",
+    "next": "16.2.1",
+    "playwright": "^1.60.0"
+  }
+}

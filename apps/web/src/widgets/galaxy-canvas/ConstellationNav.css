@@ -1,0 +1,215 @@
+/* ═══════════════════════════════════════════════════════════════
+ * 별자리 내비게이션 — 텍스트 트리거 + 슬라이드 패널
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* ── 텍스트 트리거 버튼 (생각별 픽셀리어와 동일 스타일) ── */
+.constellation-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: all 0.3s;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.constellation-trigger-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.constellation-trigger-btn--active {
+  color: #ffffff;
+}
+
+.constellation-trigger-btn:active {
+  transform: scale(0.95);
+}
+
+.constellation-trigger-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-hot-magenta);
+  box-shadow: 0 0 8px rgba(237, 22, 114, 0.6);
+  flex-shrink: 0;
+}
+
+/* ── 반투명 백드롭 ── */
+.constellation-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(2px);
+  animation: constellation-fadeIn 0.2s ease;
+}
+
+@keyframes constellation-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── 슬라이드 패널 ── */
+.constellation-panel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  z-index: 101;
+
+  background: linear-gradient(
+    135deg,
+    rgba(15, 12, 41, 0.95) 0%,
+    rgba(30, 27, 75, 0.92) 50%,
+    rgba(15, 12, 41, 0.95) 100%
+  );
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(139, 92, 246, 0.2);
+
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 4px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.constellation-panel--open {
+  transform: translateX(0);
+}
+
+/* ── 패널 헤더 ── */
+.constellation-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.constellation-panel-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #c4b5fd;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 10px rgba(196, 181, 253, 0.4);
+}
+
+.constellation-panel-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(139, 92, 246, 0.1);
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.constellation-panel-close:hover {
+  background: rgba(139, 92, 246, 0.25);
+  color: #e2e8f0;
+}
+
+/* ── 리스트 영역 ── */
+.constellation-panel-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+}
+
+.constellation-panel-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.constellation-panel-list::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 2px;
+}
+
+/* ── 별자리 아이템 ── */
+.constellation-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  position: relative;
+}
+
+.constellation-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.constellation-item:hover {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.constellation-item:hover::before {
+  background: rgba(139, 92, 246, 0.6);
+}
+
+.constellation-item:active {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+/* 네온 도트 */
+.constellation-item-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.constellation-item:hover .constellation-item-dot {
+  transform: scale(1.3);
+}
+
+/* 이름 */
+.constellation-item-name {
+  flex: 1;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 슬롯 상태 */
+.constellation-item-slots {
+  font-size: 12px;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+  background: rgba(100, 116, 139, 0.1);
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.02em;
+}

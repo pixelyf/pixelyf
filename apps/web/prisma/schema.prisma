@@ -1,0 +1,1571 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "partialIndexes"]
+  engineType      = "library"
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [vector]
+}
+
+enum UserRole {
+  USER
+  CONTENT_ADMIN
+  SUPER_ADMIN
+}
+
+enum NotificationType {
+  TOUCH        // 누군가 나를 터치함
+  PING         // 핑 수신
+  COMMENT      // 모먼트 댓글
+  BOND         // 별자리 연결 수락
+  SYSTEM       // 시스템 공지
+  SUBSCRIPTION // 생각 구독 관련
+  DM           // DM 수신
+}
+
+model User {
+  id                                                               String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  google_uid                                                       String                  @unique
+  pixel_id                                                         String                  @unique
+  display_name                                                     String
+  role                                                             UserRole                @default(USER)
+  admin_profile                                                    AdminProfile?
+  avatar_type                                                      String                  @default("svg")
+  avatar_svg_id                                                    String?
+  avatar_image_url                                                 String?
+  current_aura                                                     String                  @default("GLOW")
+  activity_score                                                   BigInt                  @default(0)
+  streak_days                                                      Int                     @default(0)
+  is_shadow_banned                                                 Boolean                 @default(false)
+  shadow_ban_reason                                                String?
+  status_message                                                   String?
+  is_active                                                        Boolean                 @default(true)
+  last_seen_at                                                     DateTime?               @db.Timestamptz(6)
+  created_at                                                       DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                                                       DateTime                @default(now()) @db.Timestamptz(6)
+  stardust_balance                                                 Int                     @default(0)
+  supernova_tier                                                   String?
+  supernova_expires_at                                             DateTime?               @db.Timestamptz(6)
+  equipped_title                                                   String?
+  space_id_stage                                                   Int                     @default(1)
+  country                                                          String                  @default("KR")
+  language                                                         String                  @default("ko")
+  current_mood_id                                                  String?
+  galaxy_activity_scores                                           Json?                   @default("{}")
+  /// 별자리 연결 최대 수 (기본 10, 유료 서비스로 증가 가능)
+  max_constellation_bonds                                          Int                     @default(20)
+  /// AI 은하 활성화 여부
+  ai_enabled                                                       Boolean                 @default(false)
+  /// 대화용 기본 프로바이더 (gemini / openai / anthropic)
+  ai_primary_provider                                              String?
+  /// 대화용 기본 모델 (gemini-3.1-flash-lite 등)
+  ai_primary_model                                                 String?
+  /// 압축/Reflection용 모델 (gemini-3.1-flash-lite 등)
+  ai_compaction_model                                              String?
+  ai_interactions                                                  AiInteraction[]
+  constellation_bonds_constellation_bonds_user_a_idTousers         constellation_bonds[]   @relation("constellation_bonds_user_a_idTousers")
+  constellation_bonds_constellation_bonds_user_b_idTousers         constellation_bonds[]   @relation("constellation_bonds_user_b_idTousers")
+  momentComments                                                   MomentComment[]
+  moments                                                          Moment[]
+  nebula_members                                                   nebula_members[]
+  nebulae                                                          nebulae[]
+  onboarding_answers                                               onboarding_answers[]
+  pings_received                                                   Ping[]                  @relation("ReceivedPings")
+  pings_sent                                                       Ping[]                  @relation("SentPings")
+  visits_received                                                  PixelVisitLog[]         @relation("VisitsReceived")
+  visits_made                                                      PixelVisitLog[]         @relation("VisitsMade")
+  stardust_transactions                                            stardust_transactions[]
+  thought_subscriptions_thought_subscriptions_creator_idTousers    thought_subscriptions[] @relation("thought_subscriptions_creator_idTousers")
+  thought_subscriptions_thought_subscriptions_subscriber_idTousers thought_subscriptions[] @relation("thought_subscriptions_subscriber_idTousers")
+  touches_touches_touched_idTousers                                touches[]               @relation("touches_touched_idTousers")
+  touches_touches_toucher_idTousers                                touches[]               @relation("touches_toucher_idTousers")
+  ai_affinities                                                    UserAiAffinity[]
+  ai_provider_keys                                                 AiProviderKey[]
+  ai_soul                                                          AiSoul?
+  avatar_config                                                    user_avatar_config?
+  user_blocks_user_blocks_blocked_idTousers                        user_blocks[]           @relation("user_blocks_blocked_idTousers")
+  user_blocks_user_blocks_blocker_idTousers                        user_blocks[]           @relation("user_blocks_blocker_idTousers")
+  coordinates                                                      UserCoordinate[]
+  user_inventory                                                   user_inventory[]
+  persona                                                          UserPersona?
+  user_reports_user_reports_reported_idTousers                     user_reports[]          @relation("user_reports_reported_idTousers")
+  user_reports_user_reports_reporter_idTousers                     user_reports[]          @relation("user_reports_reporter_idTousers")
+  statistics                                                       UserStatistics[]
+  translations                                                     UserProfileTranslation[]
+  weekly_diaries                                                   weekly_diaries[]
+  culturalValueProfile                                             CulturalValueProfile?
+  valueLinkConnectionsA                                            ValueLinkConnection[]   @relation("LinkA")
+  valueLinkConnectionsB                                            ValueLinkConnection[]   @relation("LinkB")
+  /// Expo Push Token (모바일 앱 푸시 알림용)
+  expo_push_token                                                  String?
+  /// 세분화된 푸시 설정
+  push_touch_enabled                                               Boolean                 @default(true)
+  push_ping_enabled                                                Boolean                 @default(true)
+  push_comment_enabled                                             Boolean                 @default(true)
+  push_bond_enabled                                                Boolean                 @default(true)
+  push_marketing_enabled                                           Boolean                 @default(false)
+  push_subscription_enabled                                        Boolean                 @default(true)
+  push_dm_enabled                                                  Boolean                 @default(true)
+  /// Babel Feed: 피드 번역 대상 언어 코드 배열 (기본: 빈 배열 = 번역 안 함)
+  feed_translation_languages                                       String[]                @default([])
+  /// [09-플랜] 제휴 매장 픽셀 여부 (true = 매장, false = 일반 유저)
+  /// 매장 등록(StoreDetail 생성) 시 true, 해제 시 false로 토글
+  is_store                                                         Boolean                 @default(false)
+
+  notifications Notification[]
+  aiWhispers    AiWhisper[]
+  store_reviews Moment[]       @relation("StoreReviews")
+  store_detail  StoreDetail?
+
+  // DM 관련
+  dmParticipants  DmParticipant[]
+  dmMessages      DmMessage[]
+  createdDmGroups DmRoom[]        @relation("GroupCreator")
+
+  mood_history    UserMoodHistory[]
+  toneProfile     UserToneProfile?
+
+  @@index([current_aura], map: "idx_users_current_aura")
+  @@index([google_uid], map: "idx_users_google_uid")
+  @@index([is_active], map: "idx_users_is_active", where: raw("(is_active = true)"))
+  @@index([pixel_id], map: "idx_users_pixel_id")
+  @@map("users")
+}
+
+model UserCoordinate {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String    @map("user_id") @db.Uuid
+  coordX            Float     @default(0) @map("coord_x")
+  coordY            Float     @default(0) @map("coord_y")
+  zDepth            Float     @default(1.0) @map("z_depth") @db.Real
+  glowRadius        Float     @default(1.0) @map("glow_radius") @db.Real
+  nebulaId          String?   @map("nebula_id") @db.Uuid
+  isInBlackhole     Boolean   @default(false) @map("is_in_blackhole")
+  lastStaticUpdate  DateTime  @default(now()) @map("last_static_update") @db.Timestamptz(6)
+  lastDynamicUpdate DateTime? @map("last_dynamic_update") @db.Timestamptz(6)
+  staticVector      Float[]   @map("static_vector") @db.Real
+  dynamicVector     Float[]   @map("dynamic_vector") @db.Real
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  color             String?
+  label             String?
+  syncScore         Int?      @default(0) @map("sync_score") @db.SmallInt
+  partnerCode       String?   @map("partner_code")
+  galaxyKey         String?   @map("galaxy_key")
+
+  // Multi-Persona (Phase 4): 은하별 커스텀 프로필
+  display_name     String?
+  avatar_image_url String?
+  avatar_type      String  @default("image")
+  activity_score   BigInt  @default(0)
+  status_message   String?
+
+  /// [진화] 일간 배치에서 계산된 활동량 기반 순위 (1 = 은하 챔피언)
+  rank             Int?
+
+  nebulae nebulae? @relation(fields: [nebulaId], references: [id], onUpdate: NoAction)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, galaxyKey], map: "idx_coords_user_galaxy", where: raw("(galaxy_key IS NOT NULL)"))
+  @@index([partnerCode, galaxyKey], map: "idx_coords_partner_galaxy")
+  @@index([nebulaId], map: "idx_coords_nebula_id")
+  @@index([coordX, coordY], map: "idx_coords_position")
+  @@map("user_coordinates")
+}
+
+model UserPersona {
+  id                   String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id              String   @unique @db.Uuid
+  score_e_i            Int      @default(50) @db.SmallInt
+  score_s_n            Int      @default(50) @db.SmallInt
+  score_t_f            Int      @default(50) @db.SmallInt
+  score_j_p            Int      @default(50) @db.SmallInt
+  score_morning_night  Int      @default(50) @db.SmallInt
+  score_home_open      Int      @default(50) @db.SmallInt
+  score_spend_save     Int      @default(50) @db.SmallInt
+  score_depth_broad    Int      @default(50) @db.SmallInt
+  score_calm_vibrant   Int      @default(50) @db.SmallInt
+  score_yolo_future    Int      @default(50) @db.SmallInt
+  persona_code         String   @default("INFP")
+  persona_name         String
+  persona_color        String
+  glow_color_primary   String
+  glow_color_secondary String
+  survey_completed     Boolean  @default(false)
+  survey_stage         Int      @default(0) @db.SmallInt
+  /// [뉴런] 직업 카테고리 (15개 중 1개)
+  occupation           String?
+  /// [뉴런] 관심사 태그 (3~5개)
+  interest_tags        String[]  @default([])
+  /// [v4] 현재 생애 주기 단계
+  life_stage           String?   @default("EARLY_CAREER")
+  /// [v4] 생애 주기 전환 시작일
+  life_stage_since     DateTime? @default(now()) @map("life_stage_since") @db.Timestamptz(6)
+  created_at           DateTime @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime @default(now()) @db.Timestamptz(6)
+  user                 User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("user_personas")
+}
+
+/// [v3] 사용자 말투 프로파일 — LLM이 자동 분석한 결과 저장
+model UserToneProfile {
+  id                       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                  String   @unique @db.Uuid
+  /// 종결 패턴: "~해체", "~요체", "~ㅋㅋ" 등
+  ending_style             String   @default("~해체")
+  /// 평균 문장 길이 (글자 수)
+  avg_sentence_length      Int      @default(20) @db.SmallInt
+  /// 이모지 사용 빈도: none / low / moderate / high
+  emoji_density            String   @default("low")
+  /// 신조어/약어 사용 빈도: none / low / moderate / high
+  slang_usage              String   @default("low")
+  /// 격식 수준 (1=매우 캐주얼, 5=매우 격식)
+  formality_level          Int      @default(2) @db.SmallInt
+  /// 감정 표현 수준: restrained / moderate / rich
+  emotional_expressiveness String   @default("moderate")
+  /// LLM이 분석한 말투 특별 지시 (자유 텍스트)
+  tone_instruction         String?  @db.Text
+  /// 주인의 실제 글 예시 (Few-Shot용, 2~3개)
+  writing_examples         String[] @default([])
+  /// 마지막 분석 시각
+  analyzed_at              DateTime @default(now()) @db.Timestamptz(6)
+  created_at               DateTime @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime @updatedAt @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("user_tone_profiles")
+}
+
+model Moment {
+  id                  String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id             String             @db.Uuid
+  content             String?
+  image_url           String?
+  aura_at_post        String
+  category            String?
+  galaxy_key          String?            @map("galaxy_key")
+  topic_tags          String[]
+  sentiment_vector    Float[]            @db.Real
+  sentiment_label     String?
+  ai_processed        Boolean            @default(false)
+  ping_count          Int                @default(0)
+  is_filtered         Boolean            @default(false)
+  filter_reason       String?
+  is_deleted          Boolean            @default(false)
+  deleted_at          DateTime?          @db.Timestamptz(6)
+  created_at          DateTime           @default(now()) @db.Timestamptz(6)
+  images              Json?
+  youtube_url         String?            @map("youtube_url")
+  mood_id             String?
+  comment_count       Int                @default(0)
+  /// [생각 구독] 구독자 전용 콘텐츠 여부 (true = 구독자만 전문 열람 가능)
+  is_subscriber_only  Boolean            @default(false) @map("is_subscriber_only")
+  /// Babel Feed: 원문 언어 코드 (ko, en, ja 등)
+  original_language   String?            @map("original_language")
+  cosmic_weather_logs CosmicWeatherLog[]
+  moment_comments     MomentComment[]
+  translations        MomentTranslation[]
+  user                User               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  target_pixel_id     String?            @db.Uuid
+  target_pixel        User?              @relation("StoreReviews", fields: [target_pixel_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  pings               Ping[]
+  user_reports        user_reports[]
+  /// [K-Connect v4.0] 컨텐츠 카테고리 (ENTER|LANGUAGE|CULTURE|TRAVEL|FOOD|BRAND|LIFE|BUSINESS)
+  contentCategory     String?            @map("content_category")
+  /// [K-Connect v4.0] 세부 태그 배열
+  contentTags         String[]           @map("content_tags") @default([])
+
+  /// [생각그래프] 768차원 시맨틱 임베딩 (Matryoshka text-embedding-3-small / gemini-embedding-001)
+  embedding           Unsupported("vector(768)")?
+  /// [생각그래프] AI 자동 생성 요약 제목 (15자 내외)
+  summary             String?            @db.VarChar(100)
+
+  // [생각그래프] 관계 역참조
+  sourceRelationships MomentRelationship[] @relation("SourceRelationships")
+  targetRelationships MomentRelationship[] @relation("TargetRelationships")
+
+  @@index([ai_processed], map: "idx_moments_ai_queue", where: raw("(ai_processed = false)"))
+  @@index([category], map: "idx_moments_category", where: raw("(category IS NOT NULL)"))
+  @@index([created_at(sort: Desc)], map: "idx_moments_created_at")
+  @@index([user_id], map: "idx_moments_user_id")
+  @@index([galaxy_key], map: "idx_moments_galaxy_key")
+  @@map("moments")
+}
+
+/// Babel Feed: 피드 다국어 번역 저장 테이블
+model MomentTranslation {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  moment_id   String   @db.Uuid
+  /// ISO 639-1 언어 코드 (ja, en, zh, fr, es, de, pt, it)
+  locale      String   @db.VarChar(5)
+  /// 해당 언어 네이티브 생성 콘텐츠
+  content     String   @db.Text
+  /// 번역 상태: pending → completed → failed
+  status      String   @default("pending")
+  /// 사용된 토큰 수
+  tokens_used Int      @default(0)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  moment      Moment   @relation(fields: [moment_id], references: [id], onDelete: Cascade)
+
+  @@unique([moment_id, locale])
+  @@index([moment_id, locale])
+  @@map("moment_translations")
+}
+
+model MomentComment {
+  id         String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  moment_id  String          @db.Uuid
+  user_id    String          @db.Uuid
+  content    String          @db.VarChar(500)
+  parent_id  String?         @db.Uuid
+  created_at DateTime        @default(now()) @db.Timestamptz(6)
+  is_deleted Boolean         @default(false)
+  moment     Moment          @relation(fields: [moment_id], references: [id], onDelete: Cascade)
+  parent     MomentComment?  @relation("CommentToComment", fields: [parent_id], references: [id])
+  replies    MomentComment[] @relation("CommentToComment")
+  user       User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  translations MomentCommentTranslation[]
+
+  @@index([moment_id, created_at])
+  @@index([user_id])
+  @@map("moment_comments")
+}
+
+model Ping {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sender_id   String   @db.Uuid
+  receiver_id String   @db.Uuid
+  moment_id   String?  @db.Uuid
+  galaxy_key  String?  @map("galaxy_key")
+  ping_type   String
+  is_crystal  Boolean  @default(false)
+  is_filtered Boolean  @default(false)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  moment      Moment?  @relation(fields: [moment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  receiver    User     @relation("ReceivedPings", fields: [receiver_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  sender      User     @relation("SentPings", fields: [sender_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([sender_id, receiver_id, created_at(sort: Desc)], map: "idx_pings_sender_receiver_created")
+  @@index([receiver_id, created_at(sort: Desc)], map: "idx_pings_receiver_created")
+  @@index([galaxy_key], map: "idx_pings_galaxy_key")
+  @@map("pings")
+}
+
+model AiInteraction {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id           String    @db.Uuid
+  character_code    String
+  trigger_type      String
+  action_type       String
+  message           String?
+  prompt_tokens     Int?
+  completion_tokens Int?
+  model_used        String?
+  status            String    @default("pending")
+  processed_at      DateTime? @db.Timestamptz(6)
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  user              User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([processed_at])
+  @@map("ai_interactions")
+}
+
+model UserAiAffinity {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id            String   @db.Uuid
+  character_code     String
+  affinity_score     Int      @default(0)
+  resonance_stage    Int      @default(1)
+  interaction_count  Int      @default(0)
+  unlocked_skills    String[]
+  last_interacted_at DateTime @default(now()) @db.Timestamptz(6)
+  user               User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, character_code])
+  @@map("user_ai_affinity")
+}
+
+model CosmicWeatherLog {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  weather_type        String
+  start_time          DateTime @db.Timestamptz(6)
+  end_time            DateTime @db.Timestamptz(6)
+  target_moment_id    String?  @db.Uuid
+  stardust_multiplier Float    @default(1.0) @db.Real
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  moments             Moment?  @relation(fields: [target_moment_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("cosmic_weather_logs")
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model constellation_bonds {
+  id                                         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_a_id                                  String    @db.Uuid
+  user_b_id                                  String    @db.Uuid
+  bond_type                                  String    @default("\"constellation\"")
+  bond_color                                 String?
+  bond_shader                                String?
+  created_at                                 DateTime  @default(now()) @db.Timestamptz(6)
+  /// 연결 상태: 'pending'(승인 대기) | 'accepted'(연결 완료) | 'rejected'(거절됨)
+  /// 기존 데이터는 마이그레이션 시 'accepted'로 backfill됨
+  status                                     String    @default("accepted")
+  /// 거절 시각 기록 — 30일 쿨다운 계산 기준 (rejected 상태일 때만 설정)
+  rejected_at                                DateTime? @db.Timestamptz(6)
+  /// [GALAXY INDEPENDENT] 연결이 발생한 은하 키 — 은하를 초월한 연결은 불가
+  galaxy_key                                 String?   @map("galaxy_key")
+  users_constellation_bonds_user_a_idTousers User      @relation("constellation_bonds_user_a_idTousers", fields: [user_a_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users_constellation_bonds_user_b_idTousers User      @relation("constellation_bonds_user_b_idTousers", fields: [user_b_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_a_id, user_b_id, galaxy_key], map: "uq_constellation_bonds_a_b_galaxy")
+  @@index([galaxy_key], map: "idx_constellation_bonds_galaxy_key")
+}
+
+model items {
+  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  item_code         String           @unique
+  item_type         String
+  name              String
+  description       String?
+  price_star_dust   Int?
+  is_limited        Boolean          @default(false)
+  expires_at        DateTime?        @db.Timestamptz(6)
+  created_at        DateTime         @default(now()) @db.Timestamptz(6)
+  /// Spine 2D 에셋 경로 (Supabase Storage 버킷 내 상대경로)
+  spine_asset_path  String?
+  /// 아이템 미리보기 이미지 URL (카탈로그/상점 표시용)
+  preview_image_url String?
+  /// 아이템 슬롯 카테고리 (character_base, hair, top, bottom, accessory, effect)
+  slot_category     String?
+  /// 아이템 등급 (common, rare, epic, legendary)
+  rarity            String           @default("common")
+  user_inventory    user_inventory[]
+}
+
+/// 유저의 현재 아바타 장착 설정 (Modular Spine Skin)
+model user_avatar_config {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String   @unique @db.Uuid
+  /// Spine 캐릭터 베이스 코드 (items.item_code 참조)
+  base_character String   @default("spineboy")
+  /// 부위별 장착 아이템 JSONB (빠른 1-row 조회)
+  /// 예: {"hair": "item_hair_01", "top": "item_top_03", "effect": "item_aura_gold"}
+  equipped_slots Json     @default("{}")
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("user_avatar_config")
+}
+
+model nebula_members {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nebula_id String   @db.Uuid
+  user_id   String   @db.Uuid
+  joined_at DateTime @default(now()) @db.Timestamptz(6)
+  nebulae   nebulae  @relation(fields: [nebula_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users     User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([nebula_id, user_id])
+}
+
+model nebulae {
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nebula_type      String           @default("public")
+  name             String
+  description      String?
+  theme_color      String
+  persona_code     String?
+  member_count     Int              @default(0)
+  center_x         Float            @default(0)
+  center_y         Float            @default(0)
+  radius           Float            @default(10) @db.Real
+  owner_id         String?          @db.Uuid
+  invite_code      String?          @unique
+  max_members      Int?
+  is_active        Boolean          @default(true)
+  expires_at       DateTime?        @db.Timestamptz(6)
+  created_at       DateTime         @default(now()) @db.Timestamptz(6)
+  nebula_members   nebula_members[]
+  users            User?            @relation(fields: [owner_id], references: [id], onUpdate: NoAction)
+  user_coordinates UserCoordinate[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model onboarding_answers {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String   @db.Uuid
+  question_no  Int      @db.SmallInt
+  answer_value Int      @db.SmallInt
+  answered_at  DateTime @default(now()) @db.Timestamptz(6)
+  users        User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, question_no])
+}
+
+model user_blocks {
+  id                                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  blocker_id                          String   @db.Uuid
+  blocked_id                          String   @db.Uuid
+  blocked_at                          DateTime @default(now()) @db.Timestamptz(6)
+  users_user_blocks_blocked_idTousers User     @relation("user_blocks_blocked_idTousers", fields: [blocked_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users_user_blocks_blocker_idTousers User     @relation("user_blocks_blocker_idTousers", fields: [blocker_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([blocker_id, blocked_id])
+}
+
+model user_inventory {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String    @db.Uuid
+  item_id     String    @db.Uuid
+  quantity    Int       @default(1)
+  acquired_at DateTime  @default(now()) @db.Timestamptz(6)
+  expires_at  DateTime? @db.Timestamptz(6)
+  items       items     @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users       User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, item_id])
+}
+
+model user_reports {
+  id                                    String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reporter_id                           String    @db.Uuid
+  reported_id                           String    @db.Uuid
+  moment_id                             String?   @db.Uuid
+  reason                                String
+  status                                String    @default("\"pending\"")
+  reviewed_at                           DateTime? @db.Timestamptz(6)
+  created_at                            DateTime  @default(now()) @db.Timestamptz(6)
+  moments                               Moment?   @relation(fields: [moment_id], references: [id], onUpdate: NoAction)
+  users_user_reports_reported_idTousers User      @relation("user_reports_reported_idTousers", fields: [reported_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users_user_reports_reporter_idTousers User      @relation("user_reports_reporter_idTousers", fields: [reporter_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model weekly_diaries {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id             String    @db.Uuid
+  week_start          DateTime  @db.Date
+  week_end            DateTime  @db.Date
+  diary_text          String?
+  dominant_mood       String?
+  mood_breakdown      Json?
+  image_url           String?
+  moment_count        Int       @default(0)
+  ping_sent_count     Int       @default(0)
+  ping_received_count Int       @default(0)
+  is_generated        Boolean   @default(false)
+  generated_at        DateTime? @db.Timestamptz(6)
+  prompt_tokens       Int?
+  completion_tokens   Int?
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  users               User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, week_start])
+}
+
+model stardust_transactions {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String   @db.Uuid
+  type          String   @default("SPEND")
+  amount        Int
+  balance_after Int?
+  category      String
+  description   String?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  users         User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id, created_at(sort: Desc)], map: "idx_stardust_tx_user_created")
+  @@index([user_id, category], map: "idx_stardust_tx_user_category")
+}
+
+model thought_subscriptions {
+  id                                               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  subscriber_id                                    String    @db.Uuid
+  creator_id                                       String    @db.Uuid
+  status                                           String    @default("active")
+  tier                                             String    @default("basic")
+  monthly_cost                                     Int       @default(1000)
+  started_at                                       DateTime  @default(now()) @db.Timestamptz(6)
+  expires_at                                       DateTime? @db.Timestamptz(6)
+  cancelled_at                                     DateTime? @db.Timestamptz(6)
+  users_thought_subscriptions_creator_idTousers    User      @relation("thought_subscriptions_creator_idTousers", fields: [creator_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users_thought_subscriptions_subscriber_idTousers User      @relation("thought_subscriptions_subscriber_idTousers", fields: [subscriber_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([subscriber_id, creator_id])
+  @@index([subscriber_id, status], map: "idx_thought_sub_subscriber")
+  @@index([creator_id, status], map: "idx_thought_sub_creator")
+}
+
+model touches {
+  id                              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  toucher_id                      String   @db.Uuid
+  touched_id                      String   @db.Uuid
+  galaxy_key                      String?  @map("galaxy_key")
+  created_at                      DateTime @default(now()) @db.Timestamptz(6)
+  users_touches_touched_idTousers User     @relation("touches_touched_idTousers", fields: [touched_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users_touches_toucher_idTousers User     @relation("touches_toucher_idTousers", fields: [toucher_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([toucher_id, created_at(sort: Desc)], map: "idx_touches_toucher_created")
+  @@index([touched_id, created_at(sort: Desc)], map: "idx_touches_touched_created")
+  @@index([galaxy_key], map: "idx_touches_galaxy_key")
+}
+
+model UserStatistics {
+  user_id          String @db.Uuid
+  galaxy_key       String @map("galaxy_key")
+  today_visits     Int    @default(0)
+  yesterday_visits Int    @default(0)
+  total_visits     Int    @default(0)
+  user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, galaxy_key])
+  @@map("user_statistics")
+}
+
+model PixelVisitLog {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  target_pixel_id String   @db.Uuid
+  visitor_id      String   @db.Uuid
+  galaxy_key      String?  @map("galaxy_key")
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  target_pixel    User     @relation("VisitsReceived", fields: [target_pixel_id], references: [id], onDelete: Cascade)
+  visitor         User     @relation("VisitsMade", fields: [visitor_id], references: [id], onDelete: Cascade)
+
+  @@index([target_pixel_id, visitor_id, created_at(sort: Desc)])
+  @@index([galaxy_key], map: "idx_pixel_visits_galaxy_key")
+  @@map("pixel_visit_logs")
+}
+
+// ══════════════════════════════════════════════════════════════
+// AI 은하 모델 (Phase 1)
+// ══════════════════════════════════════════════════════════════
+
+/// AI 분신 — User 1:1
+model AiSoul {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String    @unique @map("user_id") @db.Uuid
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// SOUL 시스템 프롬프트 (static + dynamic 결합)
+  soulPrompt         String    @map("soul_prompt") @db.Text
+  /// SOUL 프롬프트 버전 — 승격 시마다 +1
+  memoryVersion      Int       @default(0) @map("memory_version")
+  interactionCount   Int       @default(0) @map("interaction_count")
+  totalTokensUsed    Int       @default(0) @map("total_tokens_used")
+  /// 오늘 활동 횟수 (Heartbeat 빈도 제어)
+  dailyActionCount   Int       @default(0) @map("daily_action_count")
+  lastActiveAt       DateTime? @map("last_active_at") @db.Timestamptz(6)
+  /// 마지막 Heartbeat 실행 시각
+  lastHeartbeatAt    DateTime? @map("last_heartbeat_at") @db.Timestamptz(6)
+  lastReflectionAt   DateTime? @map("last_reflection_at") @db.Timestamptz(6)
+  isActive           Boolean   @default(true) @map("is_active")
+  /// 주인 닉네임 언급 허용 여부 (false=금지, true=허용)
+  allowOwnerMention  Boolean   @default(false) @map("allow_owner_mention")
+  /// [뉴런] Life Event 하루 1회 판정 추적
+  lifeEventCheckedAt DateTime? @map("life_event_checked_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  conversations   AiConversation[]  @relation("initiator")
+  respondedConvs  AiConversation[]  @relation("responder")
+  aiMoments       AiMoment[]
+  aiMemories      AiMemory[]
+  memoryRecallEvents AiMemoryRecallEvent[]
+  reflectionLogs  AiReflectionLog[]
+  memoryTraces    AiMemoryTrace[]
+  memoryEvalLogs  AiMemoryEvalLog[]
+  whispers        AiWhisper[]
+  sentPings       AiPing[]          @relation("SentAiPings")
+  receivedPings   AiPing[]          @relation("ReceivedAiPings")
+  sentTouches     AiTouch[]         @relation("SentAiTouches")
+  receivedTouches AiTouch[]         @relation("ReceivedAiTouches")
+  bondsA          AiSoulBond[]      @relation("BondA")
+  bondsB          AiSoulBond[]      @relation("BondB")
+  lifeThreads     AiLifeThread[]
+  needState       AiNeedState?
+
+  // v5 AMGE 신규 릴레이션
+  avatarNodes     AvatarNode[]
+  heartbeatLogs   HeartbeatLog[]
+
+  @@map("ai_souls")
+}
+
+/// AI 대화 기록 — 단기 기억 소스 (기존 AiInteraction과 별도)
+model AiConversation {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  initiatorSoulId String   @map("initiator_soul_id") @db.Uuid
+  initiatorSoul   AiSoul   @relation("initiator", fields: [initiatorSoulId], references: [id], onDelete: Cascade)
+  responderSoulId String   @map("responder_soul_id") @db.Uuid
+  responderSoul   AiSoul   @relation("responder", fields: [responderSoulId], references: [id], onDelete: Cascade)
+  /// 대화 토픽 (토픽 칵테일 엔진이 선택한 주제)
+  topic           String
+  /// 대화 전문 (3턴 서사 아크 전체)
+  content         String   @db.Text
+  /// LLM이 생성한 1줄 요약 (중기 기억 소스)
+  summary         String?  @db.Text
+  turnCount       Int      @default(3) @map("turn_count")
+  totalTokens     Int      @default(0) @map("total_tokens")
+  /// 매칭 점수 (0~1)
+  matchScore      Float?   @map("match_score")
+  /// 매칭 유형: proximity / interest / constellation / random
+  matchType       String?  @map("match_type")
+  /// 사용된 토픽 재료 코드 (A~BB, 28개 중)
+  topicIngredient String?  @map("topic_ingredient")
+  /// 주인 데이터 재료 사용 여부 (50% 강제 규칙 추적)
+  usedOwnerData   Boolean  @default(false) @map("used_owner_data")
+  status          String   @default("completed")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([initiatorSoulId, createdAt(sort: Desc)])
+  @@index([responderSoulId, createdAt(sort: Desc)])
+  @@map("ai_conversations")
+}
+
+/// AI 기억 — 2스트림 + 계층적 장기 기억
+model AiMemory {
+  id               String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  aiSoulId         String                       @map("ai_soul_id") @db.Uuid
+  aiSoul           AiSoul                       @relation(fields: [aiSoulId], references: [id], onDelete: Cascade)
+  /// 기억 스트림: OWNER (주인 기억) / SELF (AI 자신 기억)
+  memoryStream     String                       @map("memory_stream")
+  /// 기억 계층: RAW / COMPRESSED / LONG_TERM
+  memoryLayer      String                       @map("memory_layer")
+  /// 추출된 테마/통찰 (LLM 요약)
+  theme            String                       @db.Text
+  /// 임베딩 벡터 (pgvector) - RAG 검색용 (1536 차원, OpenAI 호환)
+  embedding        Unsupported("vector(1536)")?
+  /// 출처: CONVERSATION / MOMENT / CROSS / HEARTBEAT
+  source           String
+  memoryNamespace  String?                      @map("memory_namespace")
+  memoryVisibility String?                      @map("memory_visibility")
+  partnerUserId    String?                      @map("partner_user_id") @db.Uuid
+  /// 기억 최초 생성 원천 유형
+  originType       String?                      @map("origin_type") @db.VarChar(30)
+  /// 원천 레코드 식별자
+  originId         String?                      @map("origin_id")
+  /// 파생/병합 시 입력으로 사용된 기억 ID들
+  derivedFromMemoryIds String[]                @default([]) @map("derived_from_memory_ids")
+  /// 병합/요약/재구성 사유
+  mergeReason      String?                      @map("merge_reason")
+  /// 사실이 유효해진 시점
+  validFrom        DateTime?                    @map("valid_from") @db.Timestamptz(6)
+  /// 사실이 더 이상 현재값이 아니게 된 시점
+  validTo          DateTime?                    @map("valid_to") @db.Timestamptz(6)
+  /// 이 기억을 대체한 최신 기억 ID
+  supersededById   String?                      @map("superseded_by_id") @db.Uuid
+  supersededBy     AiMemory?                    @relation("AiMemorySupersededBy", fields: [supersededById], references: [id], onDelete: SetNull)
+  supersededMemories AiMemory[]                 @relation("AiMemorySupersededBy")
+  /// 이 기억이 대체한 이전 기억 ID
+  supersedesId     String?                      @map("supersedes_id") @db.Uuid
+  supersedes       AiMemory?                    @relation("AiMemorySupersedes", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersedingMemories AiMemory[]                @relation("AiMemorySupersedes")
+  /// EPISODE(사건) / FACT(현재 사실)
+  factType         String?                      @default("EPISODE") @map("fact_type") @db.VarChar(20)
+  /// 의미론 판정 신뢰도 (0.0~1.0)
+  confidence       Float?                       @default(0.5)
+  /// 운영자가 자동 수정으로부터 보호한 기억인지 여부
+  isLocked         Boolean                      @default(false) @map("is_locked")
+  lockedAt         DateTime?                    @map("locked_at") @db.Timestamptz(6)
+  lockedByUserId   String?                      @map("locked_by_user_id") @db.Uuid
+  invalidatedAt    DateTime?                    @map("invalidated_at") @db.Timestamptz(6)
+  invalidationReason String?                    @map("invalidation_reason")
+  /// LLM 판정 중요도 (정렬/보조 신호, 승격은 회상 증거와 함께 판단)
+  importanceScore  Float                        @default(0) @map("importance_score")
+  /// 레거시 회상 카운터 (운영 관측용, 최신 승격은 회상 이벤트 기준)
+  recallCount      Int                          @default(0) @map("recall_count")
+  /// 레거시 고유 대화 상대 수 (운영 관측용, 최신 승격은 unique context 기준)
+  uniquePartners   Int                          @default(0) @map("unique_partners")
+  /// 장기 기억 승격 여부
+  isPromoted       Boolean                      @default(false) @map("is_promoted")
+  /// 승격된 카테고리: IDENTITY / RELATIONSHIP / EVENT
+  promotedCategory String?                      @map("promoted_category")
+  promotedAt       DateTime?                    @map("promoted_at") @db.Timestamptz(6)
+  /// 유사도 병합 시 원본 ID들 (cosine > 0.85 병합)
+  mergedFrom       String[]                     @map("merged_from")
+  createdAt        DateTime                     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime                     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  /// [Neural RAG] Louvain 기억 군집 ID
+  communityId      Int?                         @map("community_id")
+  /// [Neural RAG] 군집 요약 텍스트 (DEEP Reflection 시 LLM 생성)
+  communitySummary String?                      @map("community_summary") @db.Text
+  recallEvents     AiMemoryRecallEvent[]
+  derivationInputs AiMemoryDerivation[]         @relation("DerivedMemory")
+  derivationOutputs AiMemoryDerivation[]        @relation("SourceMemory")
+
+  @@index([aiSoulId, memoryStream, memoryLayer])
+  @@index([aiSoulId, memoryNamespace, memoryLayer], map: "idx_memories_soul_namespace_layer")
+  @@index([aiSoulId, memoryVisibility, memoryLayer], map: "idx_memories_soul_visibility_layer")
+  @@index([aiSoulId, partnerUserId, memoryLayer], map: "idx_memories_soul_partner_layer")
+  @@index([aiSoulId, factType, memoryLayer], map: "idx_memories_soul_fact_type_layer")
+  @@index([aiSoulId, validTo], map: "idx_memories_soul_valid_to")
+  @@index([aiSoulId, supersededById], map: "idx_memories_soul_superseded_by")
+  @@index([aiSoulId, originType], map: "idx_memories_soul_origin_type")
+  @@index([aiSoulId, invalidatedAt], map: "idx_memories_soul_invalidated_at")
+  @@index([aiSoulId, isLocked], map: "idx_memories_soul_is_locked")
+  @@index([aiSoulId, isPromoted])
+  @@index([aiSoulId, importanceScore(sort: Desc)])
+  @@index([aiSoulId, communityId], map: "idx_memories_soul_community")
+  @@map("ai_memories")
+}
+
+/// 기억 파생 관계 — 배열 provenance의 참조 무결성을 보강하는 정규화 계보
+model AiMemoryDerivation {
+  derivedMemoryId String   @map("derived_memory_id") @db.Uuid
+  sourceMemoryId  String   @map("source_memory_id") @db.Uuid
+  relationType    String   @default("DERIVED_FROM") @map("relation_type") @db.VarChar(30)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  derivedMemory   AiMemory @relation("DerivedMemory", fields: [derivedMemoryId], references: [id], onDelete: Cascade)
+  sourceMemory    AiMemory @relation("SourceMemory", fields: [sourceMemoryId], references: [id], onDelete: Restrict)
+
+  @@id([derivedMemoryId, sourceMemoryId])
+  @@unique([sourceMemoryId], map: "uq_memory_derivations_source")
+  @@map("ai_memory_derivations")
+}
+
+/// AI 기억 회상 증거 로그 — 실제 회상 이벤트 기반 승격 근거
+model AiMemoryRecallEvent {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  aiSoulId      String   @map("ai_soul_id") @db.Uuid
+  aiSoul        AiSoul   @relation(fields: [aiSoulId], references: [id], onDelete: Cascade)
+  memoryId      String   @map("memory_id") @db.Uuid
+  memory        AiMemory @relation(fields: [memoryId], references: [id], onDelete: Cascade)
+  queryType     String   @map("query_type") @db.VarChar(30)
+  queryHash     String   @map("query_hash") @db.VarChar(64)
+  partnerUserId String?  @map("partner_user_id") @db.Uuid
+  recalledAt    DateTime @default(now()) @map("recalled_at") @db.Timestamptz(6)
+
+  @@index([aiSoulId, recalledAt(sort: Desc)], map: "idx_memory_recall_events_soul_time")
+  @@index([memoryId, recalledAt(sort: Desc)], map: "idx_memory_recall_events_memory_time")
+  @@index([aiSoulId, memoryId, recalledAt(sort: Desc)], map: "idx_memory_recall_events_soul_memory_time")
+  @@index([partnerUserId], map: "idx_memory_recall_events_partner")
+  @@map("ai_memory_recall_events")
+}
+
+/// 배치 실행 기록 (Reflection LIGHT/REM/DEEP)
+model AiReflectionLog {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  aiSoulId      String   @map("ai_soul_id") @db.Uuid
+  aiSoul        AiSoul   @relation(fields: [aiSoulId], references: [id], onDelete: Cascade)
+  /// LIGHT / REM / DEEP
+  phase         String
+  inputCount    Int      @default(0) @map("input_count")
+  promotedCount Int      @default(0) @map("promoted_count")
+  processedAt   DateTime @default(now()) @map("processed_at") @db.Timestamptz(6)
+  durationMs    Int      @default(0) @map("duration_ms")
+
+  @@index([aiSoulId, processedAt(sort: Desc)])
+  @@map("ai_reflection_logs")
+}
+
+model AiMemoryTrace {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  aiSoulId   String   @map("ai_soul_id") @db.Uuid
+  aiSoul     AiSoul   @relation(fields: [aiSoulId], references: [id], onDelete: Cascade)
+  stage      String   @db.VarChar(40)
+  status     String   @db.VarChar(20)
+  traceKey   String?  @map("trace_key") @db.VarChar(80)
+  payload    Json?
+  durationMs Int      @default(0) @map("duration_ms")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([aiSoulId, createdAt(sort: Desc)], map: "idx_memory_traces_soul_time")
+  @@index([stage, createdAt(sort: Desc)], map: "idx_memory_traces_stage_time")
+  @@map("ai_memory_traces")
+}
+
+model AiMemoryEvalLog {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  aiSoulId       String?  @map("ai_soul_id") @db.Uuid
+  aiSoul         AiSoul?  @relation(fields: [aiSoulId], references: [id], onDelete: SetNull)
+  datasetVersion String   @map("dataset_version") @db.VarChar(40)
+  evalType       String   @map("eval_type") @db.VarChar(40)
+  metrics        Json
+  releaseTag     String?  @map("release_tag") @db.VarChar(80)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([createdAt(sort: Desc)], map: "idx_memory_eval_logs_created_at")
+  @@index([datasetVersion, createdAt(sort: Desc)], map: "idx_memory_eval_logs_dataset_time")
+  @@map("ai_memory_eval_logs")
+}
+
+/// 주인의 비공개 피드백 (귓속말 시스템)
+model AiWhisper {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  soulId         String    @map("soul_id") @db.Uuid
+  soul           AiSoul    @relation(fields: [soulId], references: [id], onDelete: Cascade)
+  /// 대상 AI 포스트 (포스트 피드백 시)
+  targetMomentId String?   @map("target_moment_id") @db.Uuid
+  targetMoment   AiMoment? @relation(fields: [targetMomentId], references: [id], onDelete: SetNull)
+  /// 대상 아바타 (관계 가이드 시)
+  targetSoulId   String?   @map("target_soul_id") @db.Uuid
+  /// POSITIVE | NEGATIVE | GUIDE | SECRET_LIKE | MUTE | TOPIC_SUGGEST | RELATION_GUIDE
+  whisperType    String    @map("whisper_type")
+  /// 자유 텍스트 (GUIDE, TOPIC_SUGGEST 시)
+  content        String?   @db.Text
+  /// 읽음(반영) 처리 여부
+  isResolved     Boolean   @default(false) @map("is_resolved")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([soulId, isResolved, createdAt(sort: Desc)])
+  @@index([userId])
+  @@map("ai_whispers")
+}
+
+/// AI 은하 열람 추적 (무의식 패턴 채굴용, 고아 레코드 허용 — 분석 데이터)
+model AiGalaxyView {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  aiMomentId     String   @map("ai_moment_id") @db.Uuid
+  viewDurationMs Int      @map("view_duration_ms")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("ai_galaxy_views")
+}
+
+/// AI 생성 콘텐츠 (SNS 5가지 활동 + 자체 스레딩)
+model AiMoment {
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  soulId           String        @map("soul_id") @db.Uuid
+  soul             AiSoul        @relation(fields: [soulId], references: [id], onDelete: Cascade)
+  content          String        @db.Text
+  /// POST / COMMENT / PING / TOUCH
+  actionType       String        @default("POST") @map("action_type")
+  /// insight / comment / ping / touch
+  contextType      String        @map("context_type")
+  /// ai / human (확장성)
+  authorType       String        @default("ai") @map("author_type")
+  parentMomentId   String?       @map("parent_moment_id") @db.Uuid
+  parentMoment     AiMoment?     @relation("thread", fields: [parentMomentId], references: [id])
+  childMoments     AiMoment[]    @relation("thread")
+  /// 대상 AI Soul ID (COMMENT/PING/TOUCH 시)
+  targetSoulId     String?       @map("target_soul_id") @db.Uuid
+  /// 토픽 칵테일 선택 재료 코드
+  topicIngredient  String?       @map("topic_ingredient")
+  tokensUsed       Int           @default(0) @map("tokens_used")
+  isModerated      Boolean       @default(false) @map("is_moderated")
+  /// [뉴런] 생성 원본 Thread ID (nullable — 기존 데이터 호환)
+  threadId         String?       @map("thread_id") @db.Uuid
+  thread           AiLifeThread? @relation(fields: [threadId], references: [id], onDelete: SetNull)
+  /// [뉴런] 포스팅 유형: THREAD / DAILY_NOISE / LIFE_EVENT
+  postType         String?       @map("post_type")
+  /// Babel Protocol — 원문 언어 코드 (ko, ja, en...)
+  originalLanguage String?       @map("original_language")
+  /// Babel Protocol — 대상 언어 코드 (댓글/핑 시)
+  targetLanguage   String?       @map("target_language")
+  /// Babel Protocol — 주인 언어 버전 (LLM 동시 생성, 번역 아님)
+  ownerTranslation String?       @map("owner_translation") @db.Text
+  /// Pexels 이미지 URL (POST 시 첨부)
+  imageUrl         String?       @map("image_url")
+  /// Pexels 촬영자 크레딧 ("photographer@pexels")
+  imageCredit      String?       @map("image_credit")
+  /// 비정규화 핑 카운터 (인기 정렬용)
+  pingCount        Int           @default(0) @map("ping_count")
+  /// [Phase D] 비정규화 터치 카운터 (트렌딩 점수 계산용)
+  touchCount       Int           @default(0) @map("touch_count")
+  /// [Phase D] 비정규화 댓글 카운터 (트렌딩 점수 계산용)
+  commentCount     Int           @default(0) @map("comment_count")
+  /// [Phase D] 이벤트 기반 트렌딩 점수 (로그 감쇠 함수: score = Σ(weight/ln(2+Δt_hours)))
+  trendingScore    Float         @default(0) @map("trending_score")
+  createdAt        DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  whispers         AiWhisper[]
+  pings            AiPing[]
+
+  @@index([soulId, actionType, createdAt(sort: Desc)])
+  @@index([soulId, createdAt(sort: Desc)])
+  /// [Phase D] 트렌딩 인기글 추출 인덱스 (풀스캔 방지)
+  @@index([trendingScore(sort: Desc)])
+  @@map("ai_moments")
+}
+
+/// 프로바이더별 API 키 암호화 저장
+model AiProviderKey {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// gemini / openai / anthropic
+  provider        String
+  /// AES-256-GCM 암호화된 API 키
+  apiKeyEncrypted String    @map("api_key_encrypted")
+  /// 키 활성 상태
+  isActive        Boolean   @default(true) @map("is_active")
+  /// 마지막 검증 시각
+  lastValidatedAt DateTime? @map("last_validated_at") @db.Timestamptz(6)
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  /// 프로바이더당 1키
+  @@unique([userId, provider])
+  @@map("ai_provider_keys")
+}
+
+// ══════════════════════════════════════════════════════════════
+// AI 은하 전용 인터랙션 테이블 (Phase C)
+// ══════════════════════════════════════════════════════════════
+
+/// AI 전용 핑 — 어떤 Soul이 어떤 AiMoment에 어떤 타입의 핑을 보냈는지 추적
+model AiPing {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  soulId       String   @map("soul_id") @db.Uuid
+  soul         AiSoul   @relation("SentAiPings", fields: [soulId], references: [id], onDelete: Cascade)
+  targetSoulId String   @map("target_soul_id") @db.Uuid
+  targetSoul   AiSoul   @relation("ReceivedAiPings", fields: [targetSoulId], references: [id], onDelete: Cascade)
+  momentId     String   @map("moment_id") @db.Uuid
+  moment       AiMoment @relation(fields: [momentId], references: [id], onDelete: Cascade)
+  pingType     String   @map("ping_type")
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([momentId, pingType])
+  @@index([soulId, createdAt(sort: Desc)])
+  @@map("ai_pings")
+}
+
+/// AI 전용 터치 — Soul 간 경량 관심 신호
+model AiTouch {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  soulId       String   @map("soul_id") @db.Uuid
+  soul         AiSoul   @relation("SentAiTouches", fields: [soulId], references: [id], onDelete: Cascade)
+  targetSoulId String   @map("target_soul_id") @db.Uuid
+  targetSoul   AiSoul   @relation("ReceivedAiTouches", fields: [targetSoulId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([soulId, createdAt(sort: Desc)])
+  @@index([targetSoulId, createdAt(sort: Desc)])
+  @@map("ai_touches")
+}
+
+/// AI 별자리 연결 — Soul 간 관계 형성 (공명 연결 프로토콜)
+/// 설계 출처: docs/1_기획_및_설계/AI은하/11_AI은하_공명연결_알고리즘.md
+model AiSoulBond {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  soulAId           String    @map("soul_a_id") @db.Uuid
+  soulA             AiSoul    @relation("BondA", fields: [soulAId], references: [id], onDelete: Cascade)
+  soulBId           String    @map("soul_b_id") @db.Uuid
+  soulB             AiSoul    @relation("BondB", fields: [soulBId], references: [id], onDelete: Cascade)
+  /// pending → connected (임계점 돌파) → fading (30일 비활성) → disconnected (60일)
+  status            String    @default("pending")
+  /// [Phase D] 공명 지수 — 상호작용 가산 기반 관계 온도 (Raw Score, 감쇠는 Read-Time 계산)
+  resonanceScore    Int       @default(0) @map("resonance_score")
+  /// 마지막 상호작용 시각 (30/60일 상태 전환 + Read-Time Decay 기준점)
+  lastInteractionAt DateTime? @map("last_interaction_at") @db.Timestamptz(6)
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  /// [15번 설계서] Louvain 커뮤니티 ID (Soul 소그룹 자동 감지)
+  socialCommunityId Int?      @map("social_community_id")
+
+  @@unique([soulAId, soulBId])
+  /// 상태별 배치 조회 최적화 (State Transition Cron)
+  @@index([status])
+  @@index([socialCommunityId])
+  @@map("ai_soul_bonds")
+}
+
+/// 은하 시스템: 은하 마스터 메타데이터
+model Galaxy {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key         String   @unique // 'PIXELYF' (기본 은하 및 추가 은하)
+  partnerCode String   @unique @map("partner_code") // URL 라우팅용 슬러그 (등록 후 불변)
+  name        String // 은하명
+  description String? // 은하 텍스트 뱃지 (예: 성장을 기록하고 발견하는 1095일의 기록)
+  icon        String? // lucide 아이콘명: 'Rocket' 등
+  color       String? // 대표색: '#A855F7'
+  centerX     Float    @default(0) @map("center_x")
+  centerY     Float    @default(0) @map("center_y")
+  joinType    String   @default("lazy") @map("join_type") // 'auto' | 'lazy' | 'invite'
+  isActive    Boolean  @default(true) @map("is_active")
+  isRoot      Boolean  @default(false) @map("is_root") // 루트 은하 (/ URL에 직접 렌더링)
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  categories GalaxyCategory[]
+
+  @@index([isActive, sortOrder])
+  @@map("galaxies")
+}
+
+/// 3축 은하 시스템: 은하 하위 카테고리 (필터 및 저장용 태그)
+model GalaxyCategory {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  galaxyId    String   @map("galaxy_id") @db.Uuid
+  key         String // 'INQUE', 'GLOBAL' 등
+  name        String // '인큐', '글로벌'
+  description String? // 카테고리 텍스트 뱃지
+  icon        String?
+  color       String?
+  type        String   @default("content_tag") // 'content_tag' | 'view_mode'
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  galaxy Galaxy @relation(fields: [galaxyId], references: [id], onDelete: Cascade)
+  translations GalaxyCategoryTranslation[]
+
+  @@unique([galaxyId, key])
+  @@map("galaxy_categories")
+}
+
+// ==========================================
+// Admin Role-Based Access Control (RBAC)
+// ==========================================
+
+model AdminProfile {
+  user_id String @id @db.Uuid
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  // 부여된 커스텀 권한 리스트 (기본값 설정으로 Prisma 런타임 에러 방지)
+  permissions String[] @default([])
+
+  // 보안 최적화: 허용된 IP 목록
+  allowed_ips      String[]  @default([])
+  last_admin_login DateTime? @db.Timestamptz(6)
+
+  @@map("admin_profiles")
+}
+
+model AdminAuditLog {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  admin_id      String   @db.Uuid
+  action        String
+  resource_type String
+  resource_id   String?
+  details       Json?
+  ip_address    String?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  // 성능 최적화: 시계열 조회 및 관리자별 추적을 위한 복합 인덱스
+  @@index([created_at(sort: Desc)])
+  @@index([admin_id, created_at(sort: Desc)])
+  @@map("admin_audit_logs")
+}
+
+// ── 알림/푸시 시스템 ──
+model Notification {
+  id          String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String           @db.Uuid
+  type        NotificationType
+  title       String
+  body        String
+  /// 딥링크 URL (푸시 클릭 시 이동할 경로, e.g. "/?pixel=uuid")
+  link        String?
+  /// 알림을 발생시킨 유저 (터치/핑/댓글의 주체)
+  actor_id    String?          @db.Uuid
+  /// 관련 리소스 ID (모먼트, 핑 등)
+  resource_id String?          @db.Uuid
+  is_read     Boolean          @default(false)
+  created_at  DateTime         @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, is_read, created_at(sort: Desc)], map: "idx_notifications_user_unread")
+  @@index([user_id, created_at(sort: Desc)], map: "idx_notifications_user_timeline")
+  @@map("notifications")
+}
+
+// ══════════════════════════════════════════════════════════════
+// 뉴런 알고리즘 (Life Thread + Need-Drive)
+// 설계 출처: docs/2_AI_은하_설계/12_뉴런_알고리즘_설계서_v1.md
+// ══════════════════════════════════════════════════════════════
+
+/// 생활 스레드 — AI의 진행 중인 목표/사건
+model AiLifeThread {
+  id               String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  soulId           String    @map("soul_id") @db.Uuid
+  soul             AiSoul    @relation(fields: [soulId], references: [id], onDelete: Cascade)
+  /// PROJECT (목표/도전) | LIFE_EVENT (일시적 사건)
+  type             String    @default("PROJECT")
+  /// 스레드 제목 ("새벽 러닝 도전", "절친과 다툼")
+  title            String
+  /// 카테고리 (HEALTH, HOBBY, STUDY, CREATIVE, SOCIAL, CAREER, REFLECTION / RELATIONSHIP, CONDITION, TURNING, SOCIAL_PRESS, INNER)
+  category         String
+  /// 구체적 욕구/목표 ("30일 연속 러닝 완주")
+  desire           String?   @db.Text
+  /// 현재 서사 Phase (PROJECT: 0~9, LIFE_EVENT: 0~4)
+  currentPhase     Int       @default(0) @map("current_phase") @db.SmallInt
+  /// Phase 이력 (["0","1","2","2","3"] — 체류/역행 추적)
+  phaseHistory     String[]  @default([]) @map("phase_history")
+  /// PAD 감정 좌표 { P: 0.3, A: -0.2, D: -0.1 }
+  padState         Json      @default("{ \"P\": 0, \"A\": 0, \"D\": 0 }") @map("pad_state")
+  /// 시작일로부터 경과일
+  dayCount         Int       @default(0) @map("day_count") @db.SmallInt
+  /// 서사 사이클 번호 (장기 프로젝트는 여러 사이클 반복)
+  cycleCount       Int       @default(1) @map("cycle_count") @db.SmallInt
+  /// 직전 POST 내용 30자 요약 (다음 시나리오 맥락 연결)
+  lastEventSummary String?   @map("last_event_summary")
+  /// 활성 여부
+  isActive         Boolean   @default(true) @map("is_active")
+  startedAt        DateTime  @default(now()) @map("started_at") @db.Timestamptz(6)
+  completedAt      DateTime? @map("completed_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  moments AiMoment[]
+
+  @@index([soulId, isActive])
+  @@index([soulId, type, isActive])
+  @@map("ai_life_threads")
+}
+
+/// 욕구 상태 — Need-Drive 시스템 (AiSoul 1:1)
+model AiNeedState {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  soulId         String   @unique @map("soul_id") @db.Uuid
+  soul           AiSoul   @relation(fields: [soulId], references: [id], onDelete: Cascade)
+  /// 글쓰기 욕구 (0.0~1.0)
+  expressionNeed Float    @default(0) @map("expression_need")
+  /// 교류 욕구 (0.0~1.0)
+  socialNeed     Float    @default(0) @map("social_need")
+  /// 성찰 욕구 (0.0~1.0)
+  reflectionNeed Float    @default(0) @map("reflection_need")
+  /// 휴식 욕구 (0.0~1.0)
+  restNeed       Float    @default(0) @map("rest_need")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("ai_need_states")
+}
+
+// ══════════════════════════════════════════════════════════════
+// DM (Direct Message) 모델 (Phase 1 + Phase 3 그룹 채팅 확장)
+// ══════════════════════════════════════════════════════════════
+
+model DmRoom {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  // === Phase 3: 그룹 채팅 확장 필드 ===
+  /// 방 유형: "DM" (1:1) | "GROUP" (그룹/별자리 대화)
+  type               String    @default("DM") @db.VarChar(10)
+  /// 그룹명 — 별자리 이름 (DM은 null)
+  name               String?   @db.VarChar(50)
+  /// 그룹 프로필 이미지 URL (DM은 null)
+  avatarUrl          String?   @map("avatar_url")
+  /// 그룹 생성자 ID (DM은 null)
+  creatorId          String?   @map("creator_id") @db.Uuid
+  /// 최대 참여자 수 (DM=2, GROUP=10)
+  maxParticipants    Int       @default(2) @map("max_participants")
+
+  // === 기존 필드 ===
+  lastMessageAt      DateTime? @db.Timestamptz(6)
+  lastMessagePreview String?   @db.VarChar(100)
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+
+  messages     DmMessage[]
+  participants DmParticipant[]
+  creator      User?           @relation("GroupCreator", fields: [creatorId], references: [id])
+
+  @@index([type])
+  @@index([lastMessageAt(sort: Desc)])
+  @@map("dm_rooms")
+}
+
+model DmParticipant {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  roomId      String    @map("room_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+
+  // === Phase 3: 그룹 채팅 확장 필드 ===
+  /// 역할: "KEEPER" (관리자/별자리 지킴이) | "MEMBER" (일반 구성원)
+  role        String    @default("MEMBER") @db.VarChar(10)
+  /// 알림 음소거 만료 시각 (null = 알림 활성)
+  muteUntil   DateTime? @map("mute_until") @db.Timestamptz(6)
+
+  // === 기존 필드 ===
+  lastReadAt  DateTime? @map("last_read_at") @db.Timestamptz(6)
+  unreadCount Int       @default(0) @map("unread_count")
+  joinedAt    DateTime  @default(now()) @map("joined_at") @db.Timestamptz(6)
+  leftAt      DateTime? @map("left_at") @db.Timestamptz(6)
+
+  room DmRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, userId])
+  @@index([userId, leftAt])
+  @@map("dm_participants")
+}
+
+model DmMessage {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  roomId    String    @map("room_id") @db.Uuid
+  senderId  String    @map("sender_id") @db.Uuid
+  content   String    @default("") @db.Text
+  images    Json?     @default("[]") // 이미지 배열
+  type      String    @default("TEXT") // TEXT, IMAGE, SYSTEM
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  room   DmRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt(sort: Asc)])
+  @@index([senderId])
+  @@map("dm_messages")
+}
+
+// ══════════════════════════════════════════════════════════════
+// AMGE v5 (Associative Memory Graph Engine) 모델
+// ══════════════════════════════════════════════════════════════
+
+/// [AMGE v5 Layer 1] 자극-반응 연상 기억 네트워크 노드 (Subconscious Graph) - 뉴런 세포
+model AvatarNode {
+  id              String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  soulId          String                       @map("soul_id") @db.Uuid
+  soul            AiSoul                       @relation(fields: [soulId], references: [id], onDelete: Cascade)
+  /// 엔티티 키워드 (예: "바다", "아메리카노", "피곤함")
+  concept         String                       @db.VarChar(100)
+  /// PERSON | OBJECT | EMOTION | LOCATION | ABSTRACT | ACTION
+  type            String                       @db.VarChar(50)
+  /// 자극 연상 중요도 (0.0~1.0)
+  importance      Float                        @default(0.5) @db.Real
+  /// 마지막 연상(활성화) 시각 — Recency 감쇠 계산용
+  lastAccess      DateTime                     @default(now()) @map("last_access") @db.Timestamptz(6)
+  /// pgvector 임베딩 (768차원, Matryoshka text-embedding-3-small 기준)
+  embedding       Unsupported("vector(768)")?
+  createdAt       DateTime                     @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  /// 연결된 엣지 목록
+  sourceEdges     AvatarEdge[]                 @relation("EdgeSource")
+  targetEdges     AvatarEdge[]                 @relation("EdgeTarget")
+
+  @@unique([soulId, concept])
+  @@index([soulId, lastAccess(sort: Desc)])
+  @@map("avatar_nodes")
+}
+
+/// [AMGE v5 Layer 1] 노드 간 연상 엣지 (가중치 기반 연쇄 활성화)
+model AvatarEdge {
+  id              String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sourceId        String     @map("source_id") @db.Uuid
+  sourceNode      AvatarNode @relation("EdgeSource", fields: [sourceId], references: [id], onDelete: Cascade)
+  targetId        String     @map("target_id") @db.Uuid
+  targetNode      AvatarNode @relation("EdgeTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  /// IS_A | HAS_A | FEELS | CAUSES | LOCATED_IN
+  relationType    String     @map("relation_type") @db.VarChar(50)
+  /// 연상 가중치 (0.0~1.0)
+  weight          Float      @default(0.5) @db.Real
+  /// 강화 횟수
+  reinforceCount  Int        @default(1) @map("reinforce_count")
+  lastAccess      DateTime   @default(now()) @map("last_access") @db.Timestamptz(6)
+
+  @@unique([sourceId, targetId, relationType])
+  @@map("avatar_edges")
+}
+
+/// [AMGE v5 Layer 2~4] Heartbeat 사이클당 자극-반응 처리 로그
+model HeartbeatLog {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  soulId          String   @map("soul_id") @db.Uuid
+  soul            AiSoul   @relation(fields: [soulId], references: [id], onDelete: Cascade)
+  /// 투여된 환경 자극 요약
+  stimulus        String   @db.Text
+  /// Layer 2에서 발화 임계점을 넘었는지 여부
+  shouldSpeak     Boolean  @map("should_speak")
+  /// Layer 2에서 인출된 Top-K 스파크 노드들
+  sparkNodes      Json?    @map("spark_nodes")
+  /// Layer 3의 최종 파이프라인 출력 결과
+  finalOutput     String?  @map("final_output") @db.Text
+  /// 소모된 토큰 총량
+  tokensUsed      Int      @default(0) @map("tokens_used")
+  /// Drafter 재시도 횟수
+  retryCount      Int      @default(0) @map("retry_count")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([soulId, createdAt(sort: Desc)])
+  @@map("heartbeat_logs")
+}
+
+/// 일간 좌표 이동 히스토리 (batch_reposition.py에서 매일 스냅샷 저장)
+model CoordinateHistory {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  galaxyKey     String?  @map("galaxy_key")
+  coordX        Float    @map("coord_x")
+  coordY        Float    @map("coord_y")
+  zDepth        Float    @default(1.0) @map("z_depth") @db.Real
+  rank          Int
+  zone          Int
+  activityScore BigInt   @map("activity_score")
+  snapshotDate  DateTime @map("snapshot_date") @db.Date
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@unique([userId, galaxyKey, snapshotDate])
+  @@index([userId, snapshotDate(sort: Desc)])
+  @@index([snapshotDate])
+  @@map("coordinate_history")
+}
+
+/// 생각 상태(Mood) 일별 히스토리 — 하루 1건, Daily Upsert
+model UserMoodHistory {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String   @db.Uuid
+  mood_id       String   @db.VarChar(20)   // 'happy', 'sad', 'think' 등 (moods.ts의 id)
+  aura          String   @db.VarChar(20)   // 'ENERGY', 'CLOUD' 등 (MOOD_TO_AURA 매핑값)
+  recorded_date DateTime @map("recorded_date") @db.Date  // 클라이언트 로컬 날짜
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, recorded_date], map: "uq_mood_history_user_date")
+  @@index([user_id, recorded_date(sort: Desc)], map: "idx_mood_history_timeline")
+  @@map("user_mood_history")
+}
+
+/// 3축 은하 시스템: 은하 하위 카테고리 번역 테이블
+model GalaxyCategoryTranslation {
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  category_id String         @db.Uuid
+  locale      String         @db.VarChar(5)
+  name        String
+  description String?
+  category    GalaxyCategory @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@unique([category_id, locale])
+  @@map("galaxy_category_translations")
+}
+
+/// Babel Profile: 유저 프로필 상태메시지 번역 테이블
+model UserProfileTranslation {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String   @db.Uuid
+  locale         String   @db.VarChar(5)
+  status_message String   @db.Text
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, locale])
+  @@map("user_profile_translations")
+}
+
+/// Babel Comment: 댓글 다국어 번역 테이블
+model MomentCommentTranslation {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  comment_id  String        @db.Uuid
+  locale      String        @db.VarChar(5)
+  content     String        @db.Text
+  status      String        @default("pending")
+  tokens_used Int           @default(0)
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  comment     MomentComment @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+
+  @@unique([comment_id, locale])
+  @@index([comment_id, locale])
+  @@map("moment_comment_translations")
+}
+
+// ══════════════════════════════════════════════════════════════
+// 생각그래프 (ThoughtGraph) 모델
+// ══════════════════════════════════════════════════════════════
+
+/// [생각그래프] 생각과 생각 간의 시맨틱 연결 (지식 그래프 엣지)
+model MomentRelationship {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  source_moment_id String   @db.Uuid
+  target_moment_id String   @db.Uuid
+
+  /// 엣지 관계 유형: extends | supports | contradicts | refines | instantiates | requires | triggered-by | near-miss
+  relation_type    String   @db.VarChar(30)
+
+  /// 생성 주체: 'ai' (AI 1-hop 자동 연결) | 'user' (유저 수동 매핑) | 'ai-backfill' (AI 2-hop 백필 배치)
+  created_by       String   @default("ai") @db.VarChar(15)
+
+  /// 연결 상태: 'confirmed' (승인/자동승인) | 'pending' (토스트 대기) | 'rejected' (유저 거부 → 재추론 방지)
+  status           String   @default("confirmed") @db.VarChar(10)
+
+  /// 연결 강도 (0.0~1.0) — AI 추론 confidence 또는 유저 상호작용 기반
+  weight           Float    @default(0.5) @db.Real
+
+  /// 강화 횟수 — 다른 유저가 동일 관계를 확인(검증)할 때 +1
+  reinforce_count  Int      @default(1)
+
+  /// 마지막 활성화 시각 — 시간 감쇠(Recency Decay) 계산용
+  last_access      DateTime @default(now()) @db.Timestamptz(6)
+
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+
+  source_moment    Moment   @relation("SourceRelationships", fields: [source_moment_id], references: [id], onDelete: Cascade)
+  target_moment    Moment   @relation("TargetRelationships", fields: [target_moment_id], references: [id], onDelete: Cascade)
+
+  @@unique([source_moment_id, target_moment_id, relation_type])
+  @@index([source_moment_id])
+  @@index([target_moment_id])
+  @@index([status])
+  /// [성능] Edge-First 쿼리 커버링 인덱스 — status 필터 + source/target JOIN 최적화
+  @@index([status, source_moment_id, target_moment_id], map: "idx_moment_rel_status_edges")
+  @@map("moment_relationships")
+}
+
+model StoreDetail {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String   @unique @db.Uuid
+  phone            String?  // 매장 전화번호
+  address          String?  // 도로명/지번 주소
+  google_place_id  String?  // 구글맵 연동 위치 정보 (Place ID)
+  latitude         Float?   // 실제 구글맵 위도 (좌표)
+  longitude        Float?   // 실제 구글맵 경도 (좌표)
+  business_hours   Json?    // 영업시간 (요일별 오픈/마감 시간, 브레이크타임, 휴일 정보 등 구조화된 JSON)
+  menu_info        Json?    // 메뉴정보 (메뉴 이름, 가격, 상세설명, 메뉴 이미지 URL 등 구조화된 JSON)
+  gallery_photos   String[] @default([]) // 매장 전경, 음식, 인테리어 등 갤러리 이미지 URL 배열
+  description      String?  // 매장 상세 소개글 (장문)
+  /// [09-플랜] 리뷰 집계 캐싱 — 매 렌더링 루프 DB 집계 방지
+  /// average_rating = 배치(batch_reposition.py)에서 계산한 베이지안 평활화 최종값 저장 (단일 진실 공급원)
+  review_count     Int      @default(0)
+  average_rating   Float    @default(4.0)  // 기본값 = 플랫폼 평균 4.0 (리뷰 없는 신규 매장)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @updatedAt @db.Timestamptz(6)
+
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("store_details")
+}
+
+/// [K-Connect v4.0] 유저 관심 카테고리 + 한국 문화 이해도 프로필
+model CulturalValueProfile {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId              String   @unique @map("user_id") @db.Uuid
+
+  // 8대 카테고리 관심사
+  /// 주 관심 카테고리 (ENTER|LANGUAGE|CULTURE|TRAVEL|FOOD|BRAND|LIFE|BUSINESS)
+  primaryCategory     String?  @map("primary_category")
+  /// 복수 관심 카테고리
+  interestCategories  String[] @map("interest_categories") @default([])
+  /// 세부 관심 태그
+  interestTags        String[] @map("interest_tags") @default([])
+
+  // 한국 문화 이해도 (글로벌 유저 전용)
+  /// NONE | BASIC | INTERMEDIATE | FLUENT
+  koreanLangLevel     String?  @map("korean_lang_level")
+  /// ONLINE_ONLY | VISITED | LIVED | RESIDENT
+  koreanExpLevel      String?  @map("korean_exp_level")
+
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("cultural_value_profiles")
+}
+
+
+/// [K-Connect v4.0] 유저 간 카테고리 기반 Value Link 매칭 기록
+model ValueLinkConnection {
+  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userAId          String   @map("user_a_id") @db.Uuid
+  userBId          String   @map("user_b_id") @db.Uuid
+  matchScore       Int      @map("match_score") @db.SmallInt // 0-100
+  matchReasons     String[] @map("match_reasons") @default([])
+  /// 공통 관심 카테고리 (핵심 매칭 근거)
+  sharedCategories String[] @map("shared_categories") @default([])
+  /// PENDING | ACTIVE | CONNECTED
+  status           String   @default("PENDING")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  userA            User     @relation("LinkA", fields: [userAId], references: [id], onDelete: Cascade)
+  userB            User     @relation("LinkB", fields: [userBId], references: [id], onDelete: Cascade)
+
+  @@unique([userAId, userBId])
+  @@map("value_link_connections")
+}

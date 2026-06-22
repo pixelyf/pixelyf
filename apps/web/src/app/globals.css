@@ -1,0 +1,583 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Mulish:wght@300;400;700&display=swap');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import "tailwindcss";
+
+:root {
+  /* Colors */
+  --color-hot-magenta: #ed1672;
+  --color-midnight-ink: #121318;
+  --color-deep-space: #191c26;
+  --color-slate-edge: #212529;
+  --color-pure-white: #ffffff;
+  --color-void-black: #000000;
+
+  --background: var(--color-midnight-ink);
+  --foreground: var(--color-pure-white);
+
+  /* Typography — Font Families */
+  --font-poppins: 'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-muli: 'Muli', 'Mulish', 'Pretendard', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Typography — Scale */
+  --text-caption: 14px;
+  --leading-caption: 1.2;
+  --text-body-sm: 16px;
+  --leading-body-sm: 1.25;
+  --text-subheading: 18px;
+  --leading-subheading: 1;
+  --text-body: 22px;
+  --leading-body: 1.5;
+  --text-display: 110px;
+  --leading-display: 1;
+
+  /* Typography — Weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+
+  /* Spacing */
+  --spacing-unit: 8px;
+  --spacing-10: 10px;
+  --spacing-15: 15px;
+  --spacing-20: 20px;
+  --spacing-32: 32px;
+  --spacing-45: 45px;
+  --spacing-50: 50px;
+  --spacing-56: 56px;
+  --spacing-60: 60px;
+  --spacing-80: 80px;
+  --spacing-113: 113px;
+  --spacing-128: 128px;
+  --spacing-210: 210px;
+
+  /* Layout */
+  --page-max-width: 1280px;
+  --section-gap: 113px;
+  --card-padding: 20-32px;
+  --element-gap: 15px;
+
+  /* Border Radius */
+  --radius-full: 100px;
+
+  /* Named Radii */
+  --radius-tags: 100px;
+  --radius-cards: 0px;
+  --radius-inputs: 0px;
+  --radius-buttons: 100px;
+
+  /* Surfaces */
+  --surface-void-black: #000000;
+  --surface-midnight-ink: #121318;
+  --surface-deep-space: #191c26;
+  --surface-slate-edge: #212529;
+
+  /* Glassmorphism overrides */
+  --glass-bg: rgba(25, 28, 38, 0.7);
+  --glass-border: var(--color-slate-edge);
+  --glass-blur: blur(16px);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  /* Fluidtouch Colors */
+  --color-hot-magenta: var(--color-hot-magenta);
+  --color-midnight-ink: var(--color-midnight-ink);
+  --color-deep-space: var(--color-deep-space);
+  --color-slate-edge: var(--color-slate-edge);
+  --color-pure-white: var(--color-pure-white);
+  --color-void-black: var(--color-void-black);
+
+  /* Fonts */
+  --font-poppins: var(--font-poppins);
+  --font-muli: var(--font-muli);
+  --font-sans: var(--font-muli);
+
+
+  /* Radii */
+  --radius-tags: var(--radius-tags);
+  --radius-cards: var(--radius-cards);
+  --radius-inputs: var(--radius-inputs);
+  --radius-buttons: var(--radius-buttons);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-muli);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  
+  /* [MOBILE OPTIMIZATION] */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure all clickable elements respond immediately on mobile */
+a, button, [role="button"] {
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* Premium Utilities */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+.neon-glow-blue {
+  box-shadow: 0 0 15px var(--color-neon-blue);
+}
+
+.text-glow-blue {
+  text-shadow: 0 0 8px var(--color-neon-blue);
+}
+
+/* [PREMIUM] Entry Animations for Aura Hub & Modals */
+@keyframes slide-in-from-bottom {
+  from { transform: translateY(1rem); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes floatRotate {
+  from { transform: rotate(23.5deg); }
+  to { transform: rotate(383.5deg); }
+}
+
+@keyframes dotPulseColor {
+  0%, 100% { 
+    transform: scale(1); 
+    background-color: #ffffff; 
+    box-shadow: 0 0 20px rgba(255,255,255,0.8);
+  }
+  50% { 
+    transform: scale(0.5); 
+    background-color: #ed1672; 
+    box-shadow: 0 0 20px rgba(237,22,114,0.8);
+  }
+}
+
+.animate-slow-rotate {
+  animation: floatRotate 20s linear infinite;
+}
+
+.animate-dot-pulse {
+  animation: dotPulseColor 3s ease-in-out infinite;
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+/* [알림] 벨 아이콘 흔들림 + 뱃지 펄스 글로우 */
+@keyframes bell-ring-bounce {
+  0% { transform: scale(1) rotate(0); }
+  15% { transform: scale(0.85) rotate(-12deg); }
+  30% { transform: scale(1.3) rotate(12deg); }
+  45% { transform: scale(1.05) rotate(-8deg); }
+  60% { transform: scale(1.2) rotate(6deg); }
+  75% { transform: scale(0.95) rotate(-3deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+@keyframes badge-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  50% { box-shadow: 0 0 10px 3px rgba(239, 68, 68, 0); }
+}
+
+.animate-bell-shake {
+  animation: bell-ring-bounce 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+.animate-badge-pulse {
+  animation: badge-pulse-glow 1.5s infinite ease-in-out;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.zoom-in {
+  animation-name: zoom-in;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slide-in-from-bottom;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
+/* [PREMIUM] Custom Thin Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.01);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* [PREMIUM] Aura Breathing Effect for AI Interactions */
+@keyframes aura-breathing {
+  0%, 100% { 
+    border-color: rgba(99, 102, 241, 0.2); 
+    box-shadow: 0 0 5px rgba(99, 102, 241, 0.1); 
+  }
+  50% { 
+    border-color: rgba(99, 102, 241, 0.6); 
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); 
+  }
+}
+
+.animate-aura-breathing {
+  animation: aura-breathing 4s ease-in-out infinite;
+}
+
+.glass-premium {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* [PREMIUM] Tab Slide Animations */
+@keyframes slide-in-left {
+  from { transform: translateX(30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(-30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Premium Starfield Dot Pattern */
+.bg-grid-pattern {
+  background-size: 48px 48px;
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.07) 1px,
+    transparent 0
+  );
+}
+
+@layer components {
+  /* 1. 판넬 전체 배경 (유튜브 뮤직 스타일 테마 컬러 베이스 다크) */
+  /* 1. 판넬 전체 배경 (유튜브 뮤직 스타일 맑은 단색 - 꼼수 그라데이션 완전 제거) */
+  .theme-panel-bg {
+    background-color: var(--theme-bg, rgb(var(--theme-rgb-deep)));
+    transition: background-color 0.3s ease;
+  }
+
+  /* 픽셀 및 검색 판넬 내 모든 버튼의 호버(오버) 시 쉐도우 효과는 예외 없이 100% 제거 */
+  .theme-panel-bg button:hover:not(:disabled),
+  .theme-panel-bg .theme-btn-glass:hover:not(:disabled) {
+    box-shadow: none !important;
+  }
+
+  /* 픽셀 및 검색 판넬 내부 감정 테마 호버 대상 버튼들의 감정별 primaryColor 형광빛 보더 효과 */
+  .theme-panel-bg button:hover:not(:disabled):not(.no-theme-hover),
+  .theme-panel-bg .theme-btn-glass:hover:not(:disabled):not(.no-theme-hover) {
+    border-color: rgba(var(--theme-rgb), 0.8) !important;
+    transition: all 0.2s ease-in-out;
+  }
+
+
+
+  /* 2. 일반 기능 버튼 (유튜브 뮤직의 [+ 저장] 버튼 등 - 동적 테마 변수화) */
+  .theme-btn-glass {
+    @apply flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full font-medium transition-all backdrop-blur-md disabled:opacity-30;
+    background-color: var(--theme-card-bg, rgba(255, 255, 255, 0.08));
+    border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
+    color: var(--theme-text-primary, white);
+  }
+  .theme-btn-glass:hover:not(:disabled) {
+    background-color: var(--theme-card-bg-hover, rgba(255, 255, 255, 0.15));
+  }
+
+  /* 3. 최상위 강조 버튼 (저장, 완료 등 포인트 덩어리 - 동적 Contrast 대응) */
+  .theme-btn-solid {
+    @apply font-bold transition-all disabled:opacity-50;
+    background-color: var(--theme-btn-solid-bg, rgba(255, 255, 255, 0.95));
+    color: var(--theme-btn-solid-text, black);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .theme-btn-solid:hover:not(:disabled) {
+    background-color: var(--theme-btn-solid-bg, #ffffff);
+    opacity: 0.9;
+  }
+
+  /* 4. 선택된 탭 / 활성화 상태 (유튜브 뮤직 탭 스타일 - 테마 동적 반전) */
+  .theme-tab-active {
+    color: var(--theme-text-primary, white);
+    border-bottom: 2px solid var(--theme-text-primary, white);
+    font-weight: 700;
+  }
+  .theme-tab-inactive {
+    color: var(--theme-text-muted, rgba(255, 255, 255, 0.5));
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+  .theme-tab-inactive:hover {
+    color: var(--theme-text-secondary, rgba(255, 255, 255, 0.8));
+  }
+
+  /* 5. 입력 폼 아웃라인 (은은한 화이트 알파) */
+  .theme-ring-focus {
+    @apply focus-within:border-white/40 focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all outline-none;
+  }
+
+  /* 6. 가독성 극대화 전용 테마 매핑 클래스 */
+  .text-theme-primary {
+    color: var(--theme-text-primary);
+  }
+  .text-theme-secondary {
+    color: var(--theme-text-secondary);
+  }
+  .text-theme-muted {
+    color: var(--theme-text-muted);
+  }
+  .border-theme {
+    border-color: var(--theme-border);
+  }
+  .bg-theme-card {
+    background-color: var(--theme-card-bg);
+  }
+  .bg-theme-card-hover:hover {
+    background-color: var(--theme-card-bg-hover);
+  }
+  .bg-theme-card-active:active {
+    background-color: var(--theme-card-bg-active);
+  }
+}
+
+/* 초소형 폰트(12px 이하)에 대한 한글 렌더링/자간 가독성 전역 극대화 (유튜브 스튜디오/토스 핏감 적용) */
+[class*="text-[8px]"],
+[class*="text-[9px]"],
+[class*="text-[10px]"],
+[class*="text-[11px]"],
+.text-xs {
+  font-family: 'Outfit', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  letter-spacing: -0.028em !important; /* 초소형 한글 자간 밀착 */
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+[class*="text-[8px]"],
+[class*="text-[9px]"] {
+  letter-spacing: -0.04em !important; /* 9px 이하 초소형 한글 자간 추가 밀착 */
+}
+
+/* [PREMIUM] Signature Square Brand Spinner — 100% GPU Accelerated */
+/* transform(rotate) + opacity만 사용 → 메인 스레드 repaint 없음 → 절대 멈추지 않음 */
+@keyframes spinner-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes spinner-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spinner-breathe {
+  animation: spinner-breathe 1.2s ease-in-out infinite;
+  transform-origin: center;
+  will-change: opacity, transform;
+}
+
+.animate-spinner-rotate {
+  animation: spinner-rotate 1.4s linear infinite;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* ==========================================================================
+   [LIGHT THEME] Settings Modal - Card-only Light Theme Overrides (Toss style)
+   ========================================================================== */
+[key="settings-panel"] .flex-1.flex-col,
+.settings-sheet-mobile {
+  /* 카드 및 개별 설정 박스형 영역만 완전 화이트로 전환 */
+  .bg-white\/5,
+  .bg-white\/\[0\.03\],
+  .bg-slate-900\/50,
+  .bg-slate-950\/40 {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    color: #000000 !important;
+
+    /* 카드 내부의 모든 텍스트가 흰색 계열로 덮이지 않도록 강제 명도 보정 */
+    .text-white, .text-white\/95, .text-white\/90 {
+      color: #0f172a !important; /* slate-900 */
+    }
+    .text-white\/85, .text-white\/80 {
+      color: #334155 !important; /* slate-700 */
+    }
+    .text-white\/70, .text-white\/60 {
+      color: #475569 !important; /* slate-600 */
+    }
+    .text-white\/50, .text-white\/40, .text-slate-400 {
+      color: #64748b !important; /* slate-500 */
+    }
+    .text-white\/30, .text-white\/20, .text-slate-500 {
+      color: #94a3b8 !important; /* slate-400 */
+    }
+    .text-indigo-300, .text-indigo-400 {
+      color: #4f46e5 !important; /* Indigo-600 */
+    }
+
+    /* select, input 및 폼 구성요소들 */
+    select, input:not([type="checkbox"]) {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    select option {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+
+    /* 토글 스위치 비활성화 시 연한 그레이색으로 */
+    button.bg-white\/10 {
+      background-color: #cbd5e1 !important;
+    }
+  }
+
+  /* 구분선 보정 (카드 내부의 h-px 등) */
+  .bg-white\/5.h-px, .bg-white\/10.h-px {
+    background-color: #f1f5f9 !important;
+  }
+}
+
+/* ==========================================================================
+   [SAFE AREA] Mobile Hybrid Webview Safe Area Utilities for Tailwind v4
+   ========================================================================== */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility h-safe {
+  height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+/* ==========================================================================
+   [TOUR GUIDE v2] 말풍선 카드 + CSS tail (PlayPhrase.me 스타일)
+   ========================================================================== */
+
+/* 말풍선 본체 기본 스타일 */
+.tour-bubble {
+  background: rgba(5, 8, 22, 0.92);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 24px rgba(251, 191, 36, 0.06);
+  animation: tour-bubble-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  position: fixed;
+  z-index: 9002;
+}
+
+.tour-bubble:hover {
+  border-color: rgba(251, 191, 36, 0.5);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 32px rgba(251, 191, 36, 0.12);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 말풍선 꼬리 공통 (SVG 라운드 점선 연결선 대체로 인한 비활성화)
+.tour-bubble::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 7px solid transparent;
+  pointer-events: none;
+}
+
+.tour-tail-top::before {
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: rgba(251, 191, 36, 0.35);
+}
+
+.tour-tail-bottom::before {
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: rgba(251, 191, 36, 0.35);
+}
+
+.tour-tail-left::before {
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: rgba(251, 191, 36, 0.35);
+}
+
+.tour-tail-right::before {
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: rgba(251, 191, 36, 0.35);
+}
+*/
+
+/* 말풍선 입장 애니메이션 */
+@keyframes tour-bubble-in {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+
+
