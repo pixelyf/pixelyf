@@ -21,17 +21,17 @@ export function LogoText({
     sm: {
       container: "text-xl font-black tracking-tighter",
       badge:
-        "absolute -top-[0.45em] left-[0.5em] text-[7px] font-bold tracking-widest text-black bg-white border border-white px-1 py-[1px] rounded-full scale-[0.65] origin-bottom-left",
+        "absolute -top-[0.45em] left-[2em] text-[7px] font-bold tracking-widest text-black bg-white border border-white px-1 py-[1px] rounded-full scale-[0.65] origin-bottom-left",
     },
     md: {
       container: "text-3xl font-extrabold tracking-tight",
       badge:
-        "absolute -top-[0.45em] left-[0.5em] text-[9px] font-bold tracking-widest text-black bg-white border border-white px-1.5 py-0.5 rounded-full scale-75 origin-bottom-left",
+        "absolute -top-[0.45em] left-[2em] text-[9px] font-bold tracking-widest text-black bg-white border border-white px-1.5 py-0.5 rounded-full scale-75 origin-bottom-left",
     },
     lg: {
       container: "text-4xl md:text-8xl font-black tracking-tighter",
       badge:
-        "absolute -top-[0.45em] left-[0.5em] text-[10px] md:text-[12px] font-bold tracking-widest text-black bg-white border border-white px-2 py-0.5 rounded-full scale-75 origin-bottom-left",
+        "absolute -top-[0.45em] left-[2em] text-[10px] md:text-[12px] font-bold tracking-widest text-black bg-white border border-white px-2 py-0.5 rounded-full scale-75 origin-bottom-left",
     },
   };
 

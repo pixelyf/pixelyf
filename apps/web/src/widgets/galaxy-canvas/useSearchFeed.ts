@@ -11,6 +11,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useGalaxyStore } from '@/stores/galaxyStore'
+import { useMediaQuery } from '@/shared/hooks/useMediaQuery'
 import { useUserStore } from '@/entities/user/model/useUserStore'
 import { useIntersectionObserver } from '@/shared/hooks/useIntersectionObserver'
 import { VISUAL_SCALE } from '@/shared/constants/personas'
@@ -44,6 +45,10 @@ export function useSearchFeed({
   const activeCategory = useGalaxyStore(s => s.activeCategory)
   const selectPixel = useGalaxyStore(s => s.selectPixel)
 
+  const isMobile = useMediaQuery('(max-width: 767px)')
+  const mobileViewMode = useGalaxyStore(s => s.mobileViewMode)
+  const isInactive = isMobile ? mobileViewMode !== 'feed' : isCollapsed
+
   // ── 피드 상태 ──
   const [feeds, setFeeds] = useState<FeedItem[]>([])
   const [loading, setLoading] = useState(false)
@@ -61,7 +66,7 @@ export function useSearchFeed({
       setPage(nextPage)
       fetchFeeds(nextPage, false, debouncedSearchTerm)
     },
-    enabled: hasMore && !loading && !isCollapsed && feeds.length > 0,
+    enabled: hasMore && !loading && !isInactive && feeds.length > 0,
   })
 
   // ── fetchFeeds ──
@@ -139,7 +144,7 @@ export function useSearchFeed({
   const prevSearchModeRef = useRef(searchMode)
 
   useEffect(() => {
-    if (isCollapsed) return
+    if (isInactive) return
     if (!debouncedSearchTerm.trim() && prevSearchModeRef.current !== searchMode) {
       prevSearchModeRef.current = searchMode
       return
@@ -149,11 +154,11 @@ export function useSearchFeed({
     setHasMore(true)
     setFeeds([])
     fetchFeeds(0, true, debouncedSearchTerm)
-  }, [isCollapsed, debouncedSearchTerm, searchMode, feedType, fetchFeeds])
+  }, [isInactive, debouncedSearchTerm, searchMode, feedType, fetchFeeds])
 
   // ── 실시간 이벤트 구독 ──
   useEffect(() => {
-    if (isCollapsed) return
+    if (isInactive) return
 
     const prependFeed = (
       userId: string,
@@ -366,7 +371,7 @@ export function useSearchFeed({
       window.removeEventListener('moment-deleted', handleMomentDeleted)
       window.removeEventListener('optimistic-feed-update', handleFeedUpdate)
     }
-  }, [isCollapsed, dynamicLabelMap, feedType, activeCategory])
+  }, [isInactive, dynamicLabelMap, feedType, activeCategory])
 
   const handleFeedClick = useCallback((feed: FeedItem) => {
     const spatialGrid = useGalaxyStore.getState().spatialGrid;

@@ -34,4 +34,6 @@ jobs:
         run: npx tsc --noEmit --project apps/web/tsconfig.json
 
       - name: Build Web Application
+        env:
+          DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
         run: npm run build

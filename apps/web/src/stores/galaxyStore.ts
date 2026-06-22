@@ -184,6 +184,9 @@ interface GalaxyState {
   setSynthesizedDraft: (draft: string | null) => void
   reviewTargetPixelId: string | null
   setReviewTargetPixelId: (id: string | null) => void
+  // [모바일] 뷰 모드 ('feed' | 'canvas')
+  mobileViewMode: 'feed' | 'canvas'
+  setMobileViewMode: (mode: 'feed' | 'canvas') => void
 }
 
 export const useGalaxyStore = create<GalaxyState>()(
@@ -406,5 +409,7 @@ export const useGalaxyStore = create<GalaxyState>()(
     setSynthesizedDraft: (draft) => set({ synthesizedDraft: draft }),
     reviewTargetPixelId: null,
     setReviewTargetPixelId: (id) => set({ reviewTargetPixelId: id }),
+    mobileViewMode: 'feed',
+    setMobileViewMode: (mode) => set({ mobileViewMode: mode }),
   }))
 )

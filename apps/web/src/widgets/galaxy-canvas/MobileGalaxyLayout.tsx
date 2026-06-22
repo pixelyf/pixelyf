@@ -64,7 +64,8 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
   const router = useRouter()
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [viewMode, setViewMode] = useState<MobileViewMode>('feed')
+  const viewMode = useGalaxyStore(s => s.mobileViewMode)
+  const setViewMode = useGalaxyStore(s => s.setMobileViewMode)
   const [isMinimapCollapsed, setIsMinimapCollapsed] = useState(false)
   const [isCanvasReady, setIsCanvasReady] = useState(false)
 
@@ -216,11 +217,14 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
   const MINIMAP_TOTAL_WIDTH = 168
 
   return (
-    <div className="relative w-full h-full flex flex-col" style={{ backgroundColor: '#0b0f10' }}>
+    <div 
+      className={`relative w-full flex flex-col ${viewMode === 'feed' ? 'min-h-screen h-auto' : 'h-full'}`} 
+      style={{ backgroundColor: '#0b0f10' }}
+    >
       {/* ── 모바일 헤더 — 네이티브 캔버스 모드에서는 숨김 (44px 확보), 피드 모드에서는 유지 (검색/은하 전환 접근성) ── */}
       <div 
         id="mobile-header-wrapper"
-        className={`absolute top-0 left-0 w-full z-50 bg-[#0b0f10] transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 w-full z-50 bg-[#0b0f10] transition-transform duration-300 ease-in-out ${
           isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
@@ -249,7 +253,7 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
 
       {/* ── 메인 컨텐츠 영역 ── */}
       <div 
-        className="flex-1 min-h-0 w-full relative"
+        className={`w-full relative ${viewMode === 'feed' ? 'h-auto' : 'flex-1 min-h-0'}`}
       >
 
         {/* ── 피드 모드 ── */}

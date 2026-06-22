@@ -365,6 +365,9 @@ export function MomentModal({ isOpen, onClose, bgColor }: { isOpen: boolean; onC
 
       await userInitialize()
       
+      // 피드 등록 성공 시 단일 피드 보기(Spotlight) 상태가 있었다면 전체보기로 강제 복귀
+      useGalaxyStore.getState().setTargetFeedItem(null)
+      
       // 모달 초기화 + blob URL 해제
       previewUrls.forEach(url => URL.revokeObjectURL(url))
       onClose()

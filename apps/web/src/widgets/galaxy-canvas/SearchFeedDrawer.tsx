@@ -670,10 +670,9 @@ export function SearchFeedDrawer() {
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!isMobile || selectedPixelId) return;
-    const container = e.currentTarget;
 
-    // 모바일 웹/앱 통합 자체 스크롤 scrollTop 기반으로 판정
-    const isTop = container.scrollTop === 0;
+    // 모바일 웹/앱 통합 자체 스크롤 대신 window.scrollY 기반으로 판정
+    const isTop = window.scrollY === 0;
 
     if (isTop) {
       touchStartY.current = e.touches[0].clientY;
@@ -847,43 +846,39 @@ export function SearchFeedDrawer() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const lastScrollY = useRef(0);
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+  useEffect(() => {
     if (!isMobile || selectedPixelId) return;
 
-    const now = Date.now();
-    if (now - lastScrollTime.current < 80) return;
-    lastScrollTime.current = now;
+    const handleWindowScroll = () => {
+      const currentScrollY = window.scrollY;
+      const deltaY = currentScrollY - lastScrollY.current;
 
-    const currentScrollY = e.currentTarget.scrollTop;
-    const deltaY = currentScrollY - lastScrollY.current;
+      const now = Date.now();
+      if (now - lastScrollTime.current < 80) return;
+      lastScrollTime.current = now;
 
-    // 스크롤 편차 임계값을 25px로 넓혀 Jitter 방지
-    if (Math.abs(deltaY) < 25 && currentScrollY > 56) return;
+      // 스크롤 편차 임계값을 25px로 넓혀 Jitter 방지
+      if (Math.abs(deltaY) < 25 && currentScrollY > 56) return;
 
-    lastScrollY.current = currentScrollY;
+      lastScrollY.current = currentScrollY;
 
-    if (currentScrollY < 56) {
-      if (!isHeaderVisible) {
+      if (currentScrollY < 56) {
         setIsHeaderVisible(true);
         window.dispatchEvent(
           new CustomEvent("mobile-header-visibility", {
             detail: { visible: true },
           }),
         );
-      }
-    } else if (deltaY > 0) {
-      // Scrolling down
-      if (isHeaderVisible) {
+      } else if (deltaY > 0) {
+        // Scrolling down
         setIsHeaderVisible(false);
         window.dispatchEvent(
           new CustomEvent("mobile-header-visibility", {
             detail: { visible: false },
           }),
         );
-      }
-    } else if (deltaY < 0) {
-      // Scrolling up
-      if (!isHeaderVisible) {
+      } else if (deltaY < 0) {
+        // Scrolling up
         setIsHeaderVisible(true);
         window.dispatchEvent(
           new CustomEvent("mobile-header-visibility", {
@@ -891,8 +886,11 @@ export function SearchFeedDrawer() {
           }),
         );
       }
-    }
-  };
+    };
+
+    window.addEventListener("scroll", handleWindowScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleWindowScroll);
+  }, [isMobile, selectedPixelId]);
 
   // [P1] 검색어 디바운스 상태
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
@@ -1540,8 +1538,7 @@ export function SearchFeedDrawer() {
       <>
         <div
           ref={mobileScrollRef}
-          className={`theme-panel-bg text-theme-primary w-full h-full overflow-x-hidden no-scrollbar ${selectedPixelId ? "overflow-y-hidden" : "overflow-y-auto"}`}
-          onScroll={handleScroll}
+          className="theme-panel-bg text-theme-primary w-full h-auto overflow-x-clip"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}

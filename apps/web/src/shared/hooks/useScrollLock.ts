@@ -6,6 +6,7 @@ import { useMediaQuery } from '@/shared/hooks/useMediaQuery'
 
 export function useScrollLock() {
   const isMobile = useMediaQuery('(max-width: 767px)')
+  const mobileViewMode = useGalaxyStore(s => s.mobileViewMode)
   
   const selectedPixelId = useGalaxyStore(s => s.selectedPixelId)
   const selectedThoughtId = useGalaxyStore(s => s.selectedThoughtId)
@@ -23,10 +24,12 @@ export function useScrollLock() {
     isMomentModalOpen
   )
 
+  const shouldLock = isAnyPopupOpen || mobileViewMode === 'canvas'
+
   useEffect(() => {
     if (!isMobile) return
 
-    if (isAnyPopupOpen) {
+    if (shouldLock) {
       document.body.style.overflow = 'hidden'
       document.body.style.height = '100%'
 
@@ -47,5 +50,5 @@ export function useScrollLock() {
       document.documentElement.style.overflow = ''
       document.documentElement.style.height = ''
     }
-  }, [isMobile, isAnyPopupOpen])
+  }, [isMobile, shouldLock])
 }

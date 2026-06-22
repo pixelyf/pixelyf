@@ -155,7 +155,7 @@
     "searchContent": "내용",
     "searchNickname": "닉네임",
     "searchPlaceholderNickname": "닉네임으로 검색...",
-    "searchPlaceholderContent": "모먼트 내용 검색...",
+    "searchPlaceholderContent": "피드 내용 검색...",
     "searchResultsInFeed": "검색 결과는 메인 피드에 표시됩니다",
     "searchEnterTerm": "검색어를 입력하세요",
     "constellationExplore": "별자리 탐색",
@@ -310,7 +310,7 @@
     "confirmSubscribeMsg": "월 1,000 스타더스트가 차감되며 {name}님을 단골 매장으로 등록합니다."
   },
   "Search": {
-    "searchContent": "모먼트 내용 검색...",
+    "searchContent": "피드 내용 검색...",
     "searchNickname": "닉네임으로 검색...",
     "clearSearch": "검색어 지우기",
     "noResultsFor": "\"{term}\" 검색 결과 없음",
@@ -386,7 +386,7 @@
     "subOnlyRecord": "단골 전용 기록",
     "publicRecord": "모든 이웃에게 공개",
     "subOnlyDesc": "이 기록은 나를 단골로 등록한 이웃들에게만 보입니다",
-    "placeholder": "오늘의 장사 일지나 매장 방문기를 공유해 주세요.",
+    "placeholder": "오늘의 일상이나 생각을 공유해 주세요.",
     "addImage": "이미지 추가",
     "addMedia": "미디어 추가",
     "youtubeUrl": "YouTube URL을 붙여넣으세요 (선택)",

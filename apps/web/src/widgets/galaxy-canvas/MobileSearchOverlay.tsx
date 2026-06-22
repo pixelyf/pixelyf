@@ -117,7 +117,7 @@ export function MobileSearchOverlay({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={searchMode === 'nickname' ? t('searchPlaceholderNickname') : t('searchPlaceholderContent')}
-            className="w-full bg-slate-900/60 border border-slate-700/50 rounded-xl pl-9 pr-9 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-indigo-500/50 transition-all font-medium"
+            className="w-full bg-slate-900/60 border border-slate-700/50 rounded-xl pl-9 pr-9 py-2 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-all font-medium"
           />
           {searchTerm && (
             <button
@@ -136,20 +136,20 @@ export function MobileSearchOverlay({
         <span className="text-[10px] text-white/30 font-medium">{t('searchTarget')}</span>
         <button
           onClick={() => onSearchModeChange('content')}
-          className={`px-3 py-1 rounded-lg text-xs font-bold border transition-all ${
+          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
             searchMode === 'content'
-              ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300'
-              : 'bg-slate-900/40 border-slate-700/40 text-white/40'
+              ? 'bg-white border-white text-slate-950 font-black shadow-sm'
+              : 'bg-white/10 border-white/10 text-white/40 hover:text-white/80'
           }`}
         >
           {t('searchContent')}
         </button>
         <button
           onClick={() => onSearchModeChange('nickname')}
-          className={`px-3 py-1 rounded-lg text-xs font-bold border transition-all ${
+          className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
             searchMode === 'nickname'
-              ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300'
-              : 'bg-slate-900/40 border-slate-700/40 text-white/40'
+              ? 'bg-white border-white text-slate-950 font-black shadow-sm'
+              : 'bg-white/10 border-white/10 text-white/40 hover:text-white/80'
           }`}
         >
           {t('searchNickname')}
@@ -182,7 +182,7 @@ export function MobileSearchOverlay({
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <Clock className="w-4 h-4 text-white/30 shrink-0" />
-                  <span className="text-[14px] font-medium text-white/80 truncate group-hover/item:text-indigo-400 transition-colors">
+                  <span className="text-[14px] font-medium text-white/80 truncate group-hover/item:text-white transition-colors">
                     {term}
                   </span>
                 </div>
