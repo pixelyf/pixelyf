@@ -60,7 +60,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     title: t("title"),
     description: t("description"),
     icons: {
-      icon: "/logo-dark.png",
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/favicon.svg', type: 'image/svg+xml' },
+        { url: '/logo-dark.png', type: 'image/png', sizes: '512x512' },
+      ],
+      apple: [
+        { url: '/logo-dark.png', sizes: '512x512', type: 'image/png' },
+      ],
     },
     robots: {
       index: isProd,
@@ -73,17 +80,17 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        'ko': 'https://pixelyf.com',
-        'en': 'https://pixelyf.com/en',
-        'ja': 'https://pixelyf.com/ja',
-        'zh': 'https://pixelyf.com/zh',
-        'es': 'https://pixelyf.com/es',
-        'fr': 'https://pixelyf.com/fr',
-        'de': 'https://pixelyf.com/de',
-        'pt': 'https://pixelyf.com/pt',
-        'it': 'https://pixelyf.com/it',
-        'vi': 'https://pixelyf.com/vi',
-        'th': 'https://pixelyf.com/th',
+        'ko': `${siteUrl}`,
+        'en': `${siteUrl}/en`,
+        'ja': `${siteUrl}/ja`,
+        'zh': `${siteUrl}/zh`,
+        'es': `${siteUrl}/es`,
+        'fr': `${siteUrl}/fr`,
+        'de': `${siteUrl}/de`,
+        'pt': `${siteUrl}/pt`,
+        'it': `${siteUrl}/it`,
+        'vi': `${siteUrl}/vi`,
+        'th': `${siteUrl}/th`,
       }
     },
     openGraph: {
@@ -93,9 +100,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       siteName: 'Pixelyf',
       images: [
         {
-          url: 'https://pixelyf.com/logo.png',
-          width: 800,
-          height: 600,
+          url: `${siteUrl}/logo.png`,
+          width: 1200,
+          height: 630,
+          alt: t("ogImageAlt") || 'Pixelyf Logo',
         },
       ],
       locale: ogLocale,
@@ -105,8 +113,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       card: 'summary_large_image',
       title: t("title"),
       description: t("description"),
-      images: ['https://pixelyf.com/logo.png'],
-    }
+      images: [`${siteUrl}/logo.png`],
+    },
+    verification: {
+      other: {
+        'naver-site-verification': [
+          process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || 'f54c33d4e0e5670c57173b22b10a26ba',
+        ],
+      },
+    },
   };
 }
 

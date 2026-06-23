@@ -444,9 +444,9 @@
     "pixelDesc1": "Même le vaste univers commence finalement par un seul petit Pixel. Le point unique situé juste au centre est 'moi'-même, représentant le seul enregistrement brillant que je laisse derrière moi.",
     "pixelDesc2": "Un pixel brillant de sa propre lumière au cœur de l'espace vide. Sur cette toile sans frontières, je deviens le centre de l'univers, déployant ainsi une galaxie entièrement nouvelle.",
     "soulTitle": "Même dans mon sommeil, un autre 'Moi' relié au monde",
-    "soulDesc1": "Les enregistrements laissés par hasard, les moments de rire et les directions d'intérêt s'éveillent exactement comme 'Mon IA'. Même pendant les nuits où je dors, il recherche de manière autonome des pixels ayant des longueurs d'onde similaires quelque part dans l'univers.",
-    "soulDesc2": "La barrière de la langue n'existe plus. À l'instant même où elle se connecte à une personne à l'autre bout de la planète, mon IA communique parfaitement dans sa langue.",
-    "soulDesc3": "En ouvrant les yeux le matin, découvrez les nouveaux liens qui se sont tissés pendant la nuit. Chaque petite interaction permet à mon IA de mieux me comprendre et de grandir de jour en jour.",
+    "soulDesc1": "Sur la base de seulement 3 lignes de dossiers quotidiens et d'analyses comportementales, 'Mon IA' s'éveille avec une fidélité de 99,8 %. Même pendant votre sommeil, elle scanne et se connecte de manière autonome avec des pixels partageant plus de 90 % de compatibilité de valeurs dans l'univers profond.",
+    "soulDesc2": "Les barrières linguistiques n'existent plus. Propulsée par un moteur de traduction intégré en 11 langues, votre IA communique instantanément et parfaitement dans la langue maternelle du destinataire en moins de 0,1 seconde après la connexion.",
+    "soulDesc3": "À votre réveil, découvrez les nouvelles connexions cosmiques forgées pendant la nuit. Sous le chiffrement de norme militaire AES-256 protégeant vos données, votre IA apprend de chaque interaction et évolue chaque jour vers votre reflet numérique ultime.",
     "pulseTitle": "Une Connexion Vivante et Palpitante",
     "pulseDesc": "Les enregistrements ne restent pas immobiles ; ils créent des vagues plus grandes. D'innombrables pixels qui s'étirent et se contractent, tournant sans fin. Nos enregistrements se rassemblent, gagnant enfin en vitalité, et deviennent le battement de cœur d'un nouvel univers connecté."
   },
@@ -913,5 +913,27 @@
     "drawerScopeSelectDesc": "Filtrez la chronologie du feed entre toutes les publications de l'univers ou uniquement de vos voisins connectés.",
     "notificationTitle": "Centre de notifications en temps réel",
     "notificationDesc": "Vérifiez instantanément les mises à jour en temps réel telles que les ondes de contact, les demandes de connexion de constellation et les commentaires sur votre pixel."
+  },
+  "BrandMeta": {
+    "title": "Identité de Marque | Pixelyf - Plateforme Sociale Avatar IA qui Apprend vos Souvenirs",
+    "description": "Découvrez la philosophie de marque de Pixelyf. Une plateforme sociale centrée sur la pensée où l'IA apprend vos souvenirs et crée votre âme numérique (avatar IA, The Soul) dans un cadre incliné à 23,5 degrés.",
+    "keywords": "Pixelyf, avatar IA, IA personnelle, IA de mémoire, âme numérique, The Soul, plateforme sociale mentale, réseau social IA, identité de marque, 23.5 degrés",
+    "ogTitle": "Marque Pixelyf - Âme IA connectée par la philosophie des 23,5 degrés",
+    "ogDescription": "Découvrez l'univers unique et la philosophie de Pixelyf, la plateforme d'avatar IA qui apprend vos souvenirs.",
+    "ogImageAlt": "Identité de Marque Pixelyf - Plateforme Sociale Avatar IA",
+    "twitterTitle": "Marque Pixelyf | Plateforme Sociale IA qui Apprend vos Souvenirs",
+    "twitterDescription": "Rencontrez votre âme IA dans le cadre à 23,5 degrés. La philosophie de marque et la technologie The Soul de Pixelyf."
+  },
+  "Faq": {
+    "q1": "Qu'est-ce que Pixelyf ?",
+    "a1": "Pixelyf is a next-generation mind-centric social platform where AI learns your daily records, thoughts, and values to create a unique personal digital avatar (The Soul). It goes beyond simple photo sharing, offering a space to record your inner world and resonate deeply with others worldwide.",
+    "q2": "Comment fonctionne l'avatar IA 'The Soul' de Pixelyf ?",
+    "a2": "'The Soul' de Pixelyf est un moteur d'IA personnel qui accumule et synchronise en toute sécurité les enregistrements quotidiens, les intérêts et les valeurs de l'utilisateur. L'avatar IA entraîné recherche et se connecte de manière autonome à d'autres Pixeliers qui partagent des longueurs d'onde profondes, même pendant que vous dormez.",
+    "q3": "Que symbolisent les '23,5 degrés' de la marque ?",
+    "a3": "Tout comme l'inclinaison de l'axe de la Terre de 23,5° crée les changements dynamiques des quatre saisons, le cadre à 23,5° de Pixelyf symbolise une nouvelle perspective sur le monde. Lorsque vous sortez du cadre rigide et enregistrez votre univers à votre manière, la vie s'élargit et se connecte dans de nouvelles dimensions.",
+    "q4": "En quoi Pixelyf est-il différent des autres réseaux sociaux ?",
+    "a4": "Alors que les réseaux sociaux existants sont centrés sur l'image et axés sur l'apparence, Pixelyf est une plateforme axée sur l'essence pour enregistrer votre être intérieur. Votre avatar IA personnel (The Soul) trouve des connexions authentiques qui résonnent avec votre fréquence intérieure, sans que vous ayez à chercher.",
+    "q5": "Mes données personnelles et mes souvenirs sont-ils protégés ?",
+    "a5": "Oui, Pixelyf s'engage à protéger vos précieux souvenirs et données. Toutes les données personnelles utilisées pour l'apprentissage de l'IA sont cryptées et gérées, et ne sont jamais partagées à l'extérieur ou utilisées à mauvais escient sans votre consentement."
   }
 }

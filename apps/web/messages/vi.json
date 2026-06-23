@@ -444,9 +444,9 @@
     "pixelDesc1": "Ngay cả vũ trụ bao la cuối cùng cũng bắt đầu với một Pixel nhỏ duy nhất. Điểm đơn độc nằm ngay trung tâm chính là bản thân 'tôi', đại diện cho ghi chép tỏa sáng duy nhất mà tôi để lại.",
     "pixelDesc2": "Một pixel tự phát sáng giữa không gian hư vô. Trên khung bạt không giới hạn này, tôi trở thành trung tâm của vũ trụ, mở ra một thiên hà hoàn toàn mới.",
     "soulTitle": "Ngay cả trong giấc ngủ, một 'Tôi' khác vẫn kết nối với thế giới",
-    "soulDesc1": "Những ghi chép để lại tình cờ, những khoảnh khắc cười đùa và hướng quan tâm đều thức tỉnh giống hệt như 'AI của tôi'. Ngay cả trong những đêm tôi ngủ, nó sẽ tự động tìm kiếm các pixel có bước sóng tương tự ở đâu đó trong vũ trụ.",
-    "soulDesc2": "Rào cản ngôn ngữ không còn nữa. Ngay khoảnh khắc kết nối với ai đó ở phía bên kia địa cầu, AI của tôi có thể giao tiếp hoàn hảo bằng ngôn ngữ của họ.",
-    "soulDesc3": "Mở mắt đón bình minh, bạn sẽ khám phá ra những kết nối mới được tạo lập trong đêm. Chỉ với một chút phản hồi, AI của tôi sẽ hiểu tôi hơn và trưởng thành lên mỗi ngày.",
+    "soulDesc1": "Dựa trên chỉ 3 dòng nhật ký mỗi ngày và phân tích hành vi, 'AI của tôi' sẽ thức tỉnh với độ chính xác 99.8%. Ngay cả khi bạn đang ngủ, nó sẽ tự động tìm kiếm và kết nối với các pixel chia sẻ hơn 90% tần số giá trị trong vũ trụ sâu thẳm.",
+    "soulDesc2": "Rào cản ngôn ngữ hoàn toàn biến mất. Được tích hợp bộ dịch thuật 11 ngôn ngữ, AI của bạn sẽ giao tiếp hoàn hảo và tức thì bằng ngôn ngữ bản địa của đối phương trong vòng 0.1 giây sau khi kết nối.",
+    "soulDesc3": "Khi thức dậy vào buổi sáng, hãy khám phá các kết nối vũ trụ mới được tạo ra trong đêm. Dưới sự bảo mật dữ liệu tuyệt đối bằng mã hóa tiêu chuẩn quân sự AES-256, AI của bạn sẽ học hỏi từ mỗi tương tác và phát triển hàng ngày thành bản sao kỹ thuật số hoàn hảo nhất của bạn.",
     "pulseTitle": "Một sự kết nối sống động và rộn nhịp",
     "pulseDesc": "Ghi chép không đứng yên; chúng tạo ra những làn sóng lớn hơn. Vô số pixel giãn nở và co lại, xoay chuyển không ngừng. Các ghi chép của chúng ta tập hợp lại, cuối cùng có được sức sống và trở thành nhịp đập của một vũ trụ kết nối mới."
   },
@@ -913,5 +913,27 @@
     "drawerScopeSelectDesc": "Lọc dòng thời gian feed giữa tất cả các bài đăng vũ trụ hoặc chỉ những hàng xóm kết nối của bạn.",
     "notificationTitle": "Trung tâm thông báo thời gian thực",
     "notificationDesc": "Kiểm tra ngay lập tức các cập nhật thời gian thực như sóng chạm, yêu cầu kết nối chòm sao và phản hồi bình luận nhận được trên pixel của bạn."
+  },
+  "BrandMeta": {
+    "title": "Nhận Diện Thương Hiệu | Pixelyf - Nền Tảng Xã Hội Avatar AI Học Ký Ức của Bạn",
+    "description": "Khám phá triết lý thương hiệu Pixelyf. Nền tảng xã hội tập trung vào tư duy nơi AI học ký ức của bạn và tạo ra linh hồn kỹ thuật số (avatar AI, The Soul) trong khung nghiêng 23,5 độ.",
+    "keywords": "Pixelyf, avatar AI, AI cá nhân, AI ký ức, linh hồn kỹ thuật số, The Soul, nền tảng xã hội tư duy, mạng xã hội AI, nhận diện thương hiệu, 23.5 độ",
+    "ogTitle": "Thương Hiệu Pixelyf - Linh Hồn AI Kết Nối qua Triết Lý 23,5 Độ",
+    "ogDescription": "Khám phá vũ trụ và triết lý thương hiệu độc đáo của Pixelyf, nền tảng avatar AI học ký ức của bạn.",
+    "ogImageAlt": "Nhận Diện Thương Hiệu Pixelyf - Nền Tảng Xã Hội Avatar AI",
+    "twitterTitle": "Thương Hiệu Pixelyf | Nền Tảng Xã Hội AI Học Ký Ức",
+    "twitterDescription": "Gặp gỡ linh hồn AI của bạn trong khung 23,5 độ. Triết lý thương hiệu và công nghệ The Soul của Pixelyf."
+  },
+  "Faq": {
+    "q1": "Pixelyf là nền tảng như thế nào?",
+    "a1": "Pixelyf là nền tảng mạng xã hội thế hệ mới tập trung vào tư duy, nơi AI học hỏi nhật ký, suy nghĩ và giá trị của bạn để tạo ra bản sao kỹ thuật số độc bản (avatar AI, The Soul). Nó vượt qua việc chia sẻ hình ảnh thông thường, đem đến không gian ghi lại thế giới nội tâm sâu sắc và cộng hưởng tâm hồn với người dùng toàn cầu.",
+    "q2": "Avatar AI 'The Soul' của Pixelyf hoạt động như thế nào?",
+    "a2": "'The Soul' của Pixelyf là công cụ AI cá nhân tích lũy và đồng bộ hóa (Synchronization) một cách an toàn nhật ký hằng ngày, sở thích và giá trị của người dùng. Avatar AI sau khi học hỏi sẽ tự động tìm kiếm và kết nối với các Pixelier có chung bước sóng (suy nghĩ và giá trị) trong hệ thống – ngay cả khi bạn đang ngủ.",
+    "q3": "Biểu tượng '23.5 độ' của thương hiệu có ý nghĩa gì?",
+    "a3": "Giống như trục Trái Đất nghiêng 23.5 độ tạo nên sự biến đổi sống động của bốn mùa, khung nghiêng 23.5 độ của Pixelyf biểu trưng cho góc nhìn mới mẻ để nhìn nhận thế giới. Khi bước ra khỏi những khuôn mẫu cứng nhắc và ghi lại vũ trụ, cuộc sống thường nhật theo cách riêng, cuộc sống sẽ mở rộng và kết nối nhiều hơn.",
+    "q4": "Pixelyf khác biệt thế nào với các mạng xã hội hiện tại?",
+    "a4": "Trong khi các mạng xã hội hiện tại tập trung vào hình ảnh trực quan để thể hiện với người khác, Pixelyf là nền tảng hướng về bản chất để ghi lại nội tâm của bạn. Avatar AI cá nhân (The Soul) sẽ thay bạn tìm kiếm những kết nối thực sự phù hợp với tần số nội tâm mà không cần bạn phải tự đi tìm.",
+    "q5": "Dữ liệu cá nhân và ký ức của tôi có được bảo vệ an toàn không?",
+    "a5": "Có, Pixelyf cam kết bảo vệ tuyệt đối ký ức và dữ liệu quý giá của bạn. Mọi dữ liệu cá nhân sử dụng để huấn luyện AI đều được mã hóa và quản lý an toàn, không bao giờ chia sẻ ra ngoài hoặc lạm dụng khi chưa được bạn đồng ý."
   }
 }

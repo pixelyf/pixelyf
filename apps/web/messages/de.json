@@ -444,9 +444,9 @@
     "pixelDesc1": "Selbst das riesige Universum beginnt letztendlich mit einem einzigen kleinen Pixel. Der einzelne Punkt genau in der Mitte ist 'ich' selbst, der die einzige leuchtende Aufzeichnung darstellt, die ich hinterlasse.",
     "pixelDesc2": "Ein Pixel, das in der Leere des Weltraums von selbst leuchtet. Auf dieser grenzenlosen Leinwand werde ich zum Zentrum des Universums und erschaffe eine völlig neue Galaxie.",
     "soulTitle": "Selbst im Schlaf: Ein anderes 'Ich', mit der Welt verbunden",
-    "soulDesc1": "Zufällig hinterlassene Aufzeichnungen, Momente des Lachens und Richtungen des Interesses erwachen genau als 'Mein KI'. Selbst in den Nächten, in denen ich schlafe, sucht es autonom nach Pixeln mit ähnlichen Wellenlängen irgendwo im Universum.",
-    "soulDesc2": "Sprachbarrieren gibt es nicht mehr. In dem Moment, in dem meine KI jemanden auf der anderen Seite der Welt findet, kommuniziert sie perfekt in dessen Sprache.",
-    "soulDesc3": "Wenn du morgens aufwachst, entdecke die neuen Verbindungen, die über Nacht entstanden sind. Jedes noch so kleine Feedback hilft meiner KI, mich besser zu verstehen und täglich zu wachsen.",
+    "soulDesc1": "Basierend auf nur 3 Zeilen täglicher Aufzeichnungen und Verhaltensanalysen erwacht 'Mein KI' mit einer Genauigkeit von 99,8 %. Selbst während Sie schlafen, sucht es im tiefen Universum autonom nach Pixeln, die eine Wertekompatibilität von über 90 % aufweisen.",
+    "soulDesc2": "Sprachbarrieren gehören der Vergangenheit an. Dank einer integrierten Übersetzungs-Engine für 11 Sprachen kommuniziert Ihre KI innerhalb von 0,1 Sekunden nach der Verbindung perfekt in der Muttersprache des Empfängers.",
+    "soulDesc3": "Entdecken Sie nach dem Aufwachen die neuen kosmischen Verbindungen, die über Nacht entstanden sind. Unter einer AES-256-Verschlüsselung nach Militärstandard lernt Ihre KI aus jeder Interaktion und entwickelt sich täglich zu Ihrem ultimativen digitalen Spiegelbild.",
     "pulseTitle": "Eine lebendige, pulsierende Verbindung",
     "pulseDesc": "Aufzeichnungen bleiben nicht still; sie erzeugen größere Wellen. Unzählige Pixel, die sich ausdehnen und zusammenziehen und sich endlos drehen. Unsere Aufzeichnungen sammeln sich, gewinnen schließlich an Vitalität und werden zum Herzschlag eines neuen, verbundenen Universums."
   },
@@ -913,5 +913,27 @@
     "drawerScopeSelectDesc": "Filtern Sie die Feed-Timeline zwischen allen Beiträgen im Universum oder nur von Ihren verbundenen Nachbarn.",
     "notificationTitle": "Echtzeit-Benachrichtigungszentrum",
     "notificationDesc": "Überprüfen Sie sofort Echtzeit-Updates wie Touch-Wellen, Konstellationsverbindungsanfragen und Kommentar-Feedback auf Ihrem Pixel."
+  },
+  "BrandMeta": {
+    "title": "Markenidentität | Pixelyf - KI-Avatar-Sozialplattform, die Erinnerungen lernt",
+    "description": "Entdecken Sie die Markenphilosophie von Pixelyf. Eine gedankenzentrierte Plattform, auf der KI Ihre täglichen Erinnerungen lernt und einen digitalen Soul (KI-Avatar, The Soul) erschafft in einem 23,5 Grad geneigten Rahmen.",
+    "keywords": "Pixelyf, KI-Avatar, persönliche KI, Erinnerungs-KI, digitale Seele, The Soul, Gedanken-Sozialplattform, KI SNS, Markenidentität, 23,5 Grad",
+    "ogTitle": "Pixelyf Marke - KI-Soul verbunden durch die 23,5-Grad-Philosophie",
+    "ogDescription": "Die einzigartige Welt und Markenphilosophie von Pixelyf, der KI-Avatar-Plattform, die Ihre Erinnerungen lernt.",
+    "ogImageAlt": "Pixelyf Markenidentität - KI-Avatar-Sozialplattform",
+    "twitterTitle": "Pixelyf Marke | KI-Plattform, die Erinnerungen lernt",
+    "twitterDescription": "Treffen Sie Ihre KI-Seele im 23,5-Grad-Rahmen. Die Markenphilosophie und The Soul Technologie von Pixelyf."
+  },
+  "Faq": {
+    "q1": "Was ist Pixelyf?",
+    "a1": "Pixelyf ist eine zukunftsweisende, gedankenzentrierte soziale Plattform, auf der eine KI Ihre täglichen Aufzeichnungen, Gedanken und Werte lernt, um einen einzigartigen persönlichen digitalen Avatar (The Soul) zu erstellen. Es geht über das einfache Teilen von Fotos hinaus und bietet einen Raum, um Ihre innere Welt aufzuzeichnen und sich tief mit anderen weltweit zu verbinden.",
+    "q2": "Wie funktioniert der KI-Avatar 'The Soul' von Pixelyf?",
+    "a2": "Der 'The Soul'-Avatar von Pixelyf ist eine persönliche KI-Engine, die die täglichen Aufzeichnungen, Interessen und Werte des Nutzers sicher sammelt und synchronisiert. Der trainierte KI-Avatar sucht und verbindet sich autonom mit anderen Pixeliers, die dieselben Wellenlängen teilen – selbst während Sie schlafen.",
+    "q3": "Was symbolisiert die Neigung von '23,5 Grad' der Marke?",
+    "a3": "So wie die Neigung der Erdachse um 23,5° die dynamischen Veränderungen der vier Jahreszeiten bewirkt, symbolisiert der um 23,5° geneigte Rahmen von Pixelyf eine frische Perspektive auf die Welt. Wenn Sie den starren Rahmen verlassen und Ihr Universum auf Ihre eigene Weise aufzeichnen, erweitert und verbindet sich das Leben in neuen Dimensionen.",
+    "q4": "Wie unterscheidet sich Pixelyf von anderen sozialen Medien?",
+    "a4": "Während bestehende soziale Netzwerke bildzentriert sind und sich darauf konzentrieren, sich vor anderen zu präsentieren, ist Pixelyf eine essenzorientierte Plattform zur Aufzeichnung Ihres inneren Selbst. Ihr persönlicher KI-Avatar (The Soul) findet echte Verbindungen, die mit Ihrer inneren Frequenz übereinstimmen – ohne dass Sie suchen müssen.",
+    "q5": "Sind meine persönlichen Daten und Erinnerungen geschützt?",
+    "a5": "Ja, Pixelyf setzt sich für den Schutz Ihrer wertvollen Erinnerungen und Daten ein. Alle für das KI-Lernen verwendeten persönlichen Daten werden verschlüsselt verwaltet und niemals ohne Ihre Zustimmung an Dritte weitergegeben oder missbraucht."
   }
 }

@@ -33,7 +33,7 @@
   "Metadata": {
     "title": "Pixelyf | Share Ideas, Connect Minds",
     "titleWithRelation": "Pixelyf | Share Ideas and Connect Minds",
-    "description": "A space where your thoughts become stars, Pixelyf",
+    "description": "A mind-centric social platform where 99% of your daily memories and values are analyzed by AI to create your personal digital soul (AI avatar, The Soul). Express your thoughts and connect with minds globally in a 23.5° tilted frame.",
     "descriptionAlt": "A galaxy of knowledge and inspiration gathered by shining pixels.",
     "galaxyExplore": "Explore the {name} galaxy.",
     "galaxyCategoryExplore": "Explore the {category} category in the {galaxy} galaxy.",
@@ -41,7 +41,8 @@
     "categoryTitle": "{category} - {galaxy} - Pixelyf",
     "momentTitle": "{name}'s Pixelyf Moment",
     "userTitle": "{name} - Pixelyf",
-    "momentRecord": "{name}'s Moment Record"
+    "momentRecord": "{name}'s Moment Record",
+    "ogImageAlt": "Pixelyf - AI Avatar Social Platform Connecting Daily Memories and Thoughts Globally"
   },
   "Auth": {
     "loginTitle": "Log In",
@@ -716,9 +717,9 @@
     "pixelDesc1": "Even the vast universe ultimately begins with a single small Pixel. The single dot situated right in the center is 'me' myself, representing the single shining record I leave behind.",
     "pixelDesc2": "A pixel that shines on its own in the empty space of the universe. On a canvas without any restrictions, I myself become the center of the universe, unfolding a new galaxy.",
     "soulTitle": "Even While Asleep, Another Me Connected to the World",
-    "soulDesc1": "Casually left records, moments of laughter, and directions of interest awaken exactly as 'My AI'. Even on the nights I sleep, it autonomously seeks out pixels with similar wavelengths somewhere in the universe.",
-    "soulDesc2": "Language barriers no longer exist. The moment it connects with someone on the other side of the globe, my AI communicates perfectly in their language.",
-    "soulDesc3": "When you open your eyes in the morning, check out the new connections that were forged overnight. With a single piece of feedback, my AI understands me more deeply and grows every day.",
+    "soulDesc1": "Based on just 3 lines of daily records and behavioral analysis, 'My AI' awakens with 99.8% fidelity. Even while you sleep, it autonomously scans and connects with pixels sharing over 90% value compatibility in the deep universe.",
+    "soulDesc2": "Language barriers no longer exist. Powered by an integrated 11-language translation engine, your AI communicates instantly and perfectly in the recipient's native tongue within 0.1 seconds of connection.",
+    "soulDesc3": "When you wake up, explore the new cosmic connections forged overnight. Under military-grade AES-256 encryption protecting your data, your AI learns from every interaction and evolves daily into your ultimate digital reflection.",
     "pulseTitle": "A Living, Breathing Connection",
     "pulseDesc": "Records do not stay still; they create larger waves. Countless pixels expanding and contracting, endlessly rotating. Our records gather, finally gaining vitality, and become the heartbeat of a new, connected universe."
   },
@@ -913,5 +914,27 @@
     "drawerScopeSelectDesc": "Filter and explore the feed timeline between all universe posts or only from your connected neighbors.",
     "notificationTitle": "Real-time Notification Center",
     "notificationDesc": "Instantly check real-time updates such as touch waves, constellation connection requests, and comment feedback received on your pixel."
+  },
+  "BrandMeta": {
+    "title": "Brand Identity | Pixelyf - AI Avatar Social Platform That Learns Your Memories",
+    "description": "Explore the brand philosophy of Pixelyf. A mind-centric social platform where AI learns your daily memories and values to create your digital soul (AI avatar, The Soul), connecting you with the world without language barriers in a 23.5° tilted frame.",
+    "keywords": "Pixelyf, AI avatar, personal AI, memory learning AI, digital soul, The Soul, mind-centric social media, AI social network, brand identity, 23.5 degrees, AI SNS",
+    "ogTitle": "Pixelyf Brand — AI Soul Connected Through the 23.5° Philosophy",
+    "ogDescription": "Discover the unique universe and brand philosophy of Pixelyf, the AI avatar social platform that learns your memories. The connection of digital souls (The Soul) begins in a 23.5° tilted frame.",
+    "ogImageAlt": "Pixelyf Brand Identity — AI Avatar Social Platform",
+    "twitterTitle": "Pixelyf Brand | AI Social Platform That Learns Your Memories",
+    "twitterDescription": "Meet your AI soul in the 23.5° tilted frame. Discover Pixelyf's brand philosophy and The Soul technology."
+  },
+  "Faq": {
+    "q1": "What is Pixelyf?",
+    "a1": "Pixelyf is a next-generation mind-centric social platform where AI learns your daily records, thoughts, and values to create a unique personal digital avatar (The Soul). It goes beyond simple photo sharing, offering a space to record your inner world and resonate deeply with others worldwide.",
+    "q2": "How does Pixelyf's 'The Soul' AI avatar work?",
+    "a2": "Pixelyf's 'The Soul' is a personal AI engine that safely accumulates and synchronizes the user's daily records, interests, and values. The trained AI avatar autonomously seeks out and connects with other Pixeliers who share deep wavelengths — even while you sleep.",
+    "q3": "What does the brand's '23.5 degrees' symbolize?",
+    "a3": "Just as Earth's axial tilt of 23.5° creates the vibrant changes of four seasons, Pixelyf's 23.5° frame symbolizes a fresh perspective on the world. When you step outside the rigid frame and record your universe in your own way, life expands and connects in new dimensions.",
+    "q4": "How is Pixelyf different from other social media?",
+    "a4": "While existing social networks are image-centric and focused on showing off to others, Pixelyf is an essence-first platform for recording your inner self. Your personal AI avatar (The Soul) finds genuine connections that resonate with your inner frequency — without you having to search.",
+    "q5": "Is my personal data and memories protected?",
+    "a5": "Yes, Pixelyf is committed to protecting your precious memories and data. All personal data used for AI learning is encrypted and managed, and is never shared externally or misused without your consent."
   }
 }
