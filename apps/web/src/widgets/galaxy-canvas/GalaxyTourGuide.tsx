@@ -738,7 +738,9 @@ function adjustVerticalStackUp(group: ResolvedBubble[], wH: number, margin: numb
         return true
       })
 
-      console.log('[TourDebug] calculateBubbles start. Active steps count:', activeSteps.length)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[TourDebug] calculateBubbles start. Active steps count:', activeSteps.length)
+      }
 
       const resolved: ResolvedBubble[] = []
 
@@ -963,10 +965,14 @@ function adjustVerticalStackUp(group: ResolvedBubble[], wH: number, margin: numb
         }
       }
 
-      console.log('[TourDebug] calculateBubbles end. Resolved count:', resolved.length)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[TourDebug] calculateBubbles end. Resolved count:', resolved.length)
+      }
       setBubbles(resolved)
     } catch (error) {
-      console.error('[TourDebug] Critical error during calculateBubbles:', error)
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[TourDebug] Critical error during calculateBubbles:', error)
+      }
     }
   }, [isTourOpen, viewMode, user, tGalaxy, selectedPixelId, pixelPanelWidth])
 
@@ -988,8 +994,37 @@ function adjustVerticalStackUp(group: ResolvedBubble[], wH: number, margin: numb
     window.addEventListener('resize', scheduleCalculate)
 
     // DOM 변화 감지 (비동기 마운트 및 탭 변경 시 즉시 재계산)
-    observerRef.current = new MutationObserver(() => {
-      scheduleCalculate()
+    observerRef.current = new MutationObserver((mutations) => {
+      const hasOutsideChange = mutations.some((m) => {
+        const target = m.target as HTMLElement
+        if (
+          target.closest?.('.tour-bubble') ||
+          target.closest?.('.tour-highlight-dot') ||
+          target.tagName === 'path' ||
+          target.closest?.('svg')
+        ) {
+          return false
+        }
+        if (m.addedNodes.length > 0 || m.removedNodes.length > 0) {
+          const nodes = [...Array.from(m.addedNodes), ...Array.from(m.removedNodes)]
+          return nodes.some((node) => {
+            const el = node as HTMLElement
+            if (!el.classList) return true
+            const isTourEl =
+              el.classList.contains('tour-bubble') ||
+              el.querySelector?.('.tour-bubble') ||
+              el.classList.contains('tour-highlight-dot') ||
+              el.tagName === 'path' ||
+              el.tagName === 'svg'
+            return !isTourEl
+          })
+        }
+        return true
+      })
+
+      if (hasOutsideChange) {
+        scheduleCalculate()
+      }
     })
     observerRef.current.observe(document.body, {
       childList: true,
@@ -1165,7 +1200,7 @@ const BubbleCard = React.forwardRef<HTMLDivElement, Omit<BubbleCardProps, 'ref'>
       <>
         {/* 타겟 하이라이트 도트 */}
         <div
-          className="fixed z-[9001] pointer-events-none"
+          className="tour-highlight-dot fixed z-[9001] pointer-events-none"
           style={{
             left: bubble.targetCX - 5,
             top: bubble.targetCY - 5,
