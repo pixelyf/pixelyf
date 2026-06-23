@@ -601,7 +601,6 @@ export function GalaxyTourGuide() {
   const bubbleRefs = useRef<Record<string, HTMLDivElement | null>>({})
   const rafRef = useRef<number | null>(null)
   const timerRef = useRef<any>(null)
-  const observerRef = useRef<MutationObserver | null>(null)
   const resizeObserverRef = useRef<ResizeObserver | null>(null)
 
   // ── 마운트 딜레이 및 레이스 컨디션 감지용 재시도 Refs ──
@@ -737,10 +736,6 @@ function adjustVerticalStackUp(group: ResolvedBubble[], wH: number, margin: numb
         if (step.condition === 'drawer-open') return drawerOpen && viewMode === 'pixelyer'
         return true
       })
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[TourDebug] calculateBubbles start. Active steps count:', activeSteps.length)
-      }
 
       const resolved: ResolvedBubble[] = []
 
@@ -965,20 +960,19 @@ function adjustVerticalStackUp(group: ResolvedBubble[], wH: number, margin: numb
         }
       }
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[TourDebug] calculateBubbles end. Resolved count:', resolved.length)
-      }
       setBubbles(resolved)
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('[TourDebug] Critical error during calculateBubbles:', error)
-      }
+      // Silently catch layout resolver errors to prevent console spam
     }
   }, [isTourOpen, viewMode, user, tGalaxy, selectedPixelId, pixelPanelWidth])
 
-  // ── 완전 동기식 즉시 계산 ──
+  // ── RAF 기반 디바운싱 계산 ──
   const scheduleCalculate = useCallback(() => {
-    calculateBubbles()
+    if (rafRef.current) return
+    rafRef.current = requestAnimationFrame(() => {
+      calculateBubbles()
+      rafRef.current = null
+    })
   }, [calculateBubbles])
 
   useEffect(() => {
@@ -987,54 +981,18 @@ function adjustVerticalStackUp(group: ResolvedBubble[], wH: number, margin: numb
       return
     }
 
-    // 마운트 시 동기식 즉시 실행
+    // 마운트 시 즉시 실행
     scheduleCalculate()
 
     // 창 크기 변경 대응
     window.addEventListener('resize', scheduleCalculate)
 
-    // DOM 변화 감지 (비동기 마운트 및 탭 변경 시 즉시 재계산)
-    observerRef.current = new MutationObserver((mutations) => {
-      const hasOutsideChange = mutations.some((m) => {
-        const target = m.target as HTMLElement
-        if (
-          target.closest?.('.tour-bubble') ||
-          target.closest?.('.tour-highlight-dot') ||
-          target.tagName === 'path' ||
-          target.closest?.('svg')
-        ) {
-          return false
-        }
-        if (m.addedNodes.length > 0 || m.removedNodes.length > 0) {
-          const nodes = [...Array.from(m.addedNodes), ...Array.from(m.removedNodes)]
-          return nodes.some((node) => {
-            const el = node as HTMLElement
-            if (!el.classList) return true
-            const isTourEl =
-              el.classList.contains('tour-bubble') ||
-              el.querySelector?.('.tour-bubble') ||
-              el.classList.contains('tour-highlight-dot') ||
-              el.tagName === 'path' ||
-              el.tagName === 'svg'
-            return !isTourEl
-          })
-        }
-        return true
-      })
-
-      if (hasOutsideChange) {
-        scheduleCalculate()
-      }
-    })
-    observerRef.current.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-    })
-
     return () => {
       window.removeEventListener('resize', scheduleCalculate)
-      observerRef.current?.disconnect()
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
     }
   }, [isTourOpen, scheduleCalculate])
 

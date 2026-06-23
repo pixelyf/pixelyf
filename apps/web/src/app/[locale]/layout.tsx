@@ -12,6 +12,16 @@ import { PingListener } from "@/shared/ui/PingListener";
 import { getCurrentUser } from "@/shared/lib/auth/getCurrentUser";
 import Script from "next/script";
 
+if (process.env.NODE_ENV === 'production') {
+  const noop = () => {};
+  console.log = noop;
+  console.info = noop;
+  console.warn = noop;
+  console.error = noop;
+  console.debug = noop;
+}
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -153,6 +163,22 @@ export default async function LocaleLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <head>
+        {process.env.NODE_ENV === 'production' && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  var noop = function() {};
+                  var methods = ['log', 'debug', 'info', 'warn', 'error', 'dir', 'table', 'trace', 'group', 'groupCollapsed', 'groupEnd', 'time', 'timeEnd'];
+                  if (!window.console) window.console = {};
+                  for (var i = 0; i < methods.length; i++) {
+                    window.console[methods[i]] = noop;
+                  }
+                })();
+              `,
+            }}
+          />
+        )}
         {/* Google Analytics */}
         {gaId && (
           <>

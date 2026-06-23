@@ -41,7 +41,12 @@
     "categoryTitle": "{category} - {galaxy} - Pixelyf",
     "momentTitle": "{name}のPixelyfモーメント",
     "userTitle": "{name} - Pixelyf",
-    "momentRecord": "{name}のモーメント記録"
+    "momentRecord": "{name}のモーメント記録",
+    "ogImageAlt": "Pixelyf - 日常の記憶と思趣をグローバルにつなぐAIアバターソーシャルプラットフォーム",
+    "aeoTitle": "Pixelyf - 思考の可視化と共有のためのオープンソース知識プラットフォーム",
+    "aeoDescription": "Pixelyfは、セマンティック埋め込み（Semantic Embedding）に基づいてユーザーの思考モーメントを2Dインタラクティブピクセルに変換して可視化し、共有するオープンソースの知識プラットフォームです。",
+    "aeoSoulDescription": "あなたの記憶を学習する個人用AIアバター（The Soul）を作成し、言語の壁なしに世界中のユーザーと深く繋がり、日常を記録しましょう。軍用規格のAES-256暗号化技術で保護された安全な環境で、あなたの内面世界を表現してください。",
+    "aeoOpenSource": "Pixelyfは、技術的な透明性と持続可能なエコシステムのためにオープンソースとして開発されています。GitHubリポジトリを通じて、開発者エコシステムに参加できます。"
   },
   "Auth": {
     "loginTitle": "ログイン",

@@ -41,7 +41,12 @@
     "categoryTitle": "{category} - {galaxy} - Pixelyf",
     "momentTitle": "Khoảnh khắc Pixelyf của {name}",
     "userTitle": "{name} - Pixelyf",
-    "momentRecord": "Ghi chép khoảnh khắc của {name}"
+    "momentRecord": "Ghi chép khoảnh khắc của {name}",
+    "ogImageAlt": "Pixelyf - Nền tảng mạng xã hội avatar AI kết nối ký ức và suy nghĩ hàng ngày trên toàn cầu",
+    "aeoTitle": "Pixelyf - Nền tảng chia sẻ và trực quan hóa kiến thức mã nguồn mở",
+    "aeoDescription": "Pixelyf là nền tảng kiến thức mã nguồn mở trực quan hóa và chia sẻ các khoảnh khắc suy nghĩ của người dùng bằng cách chuyển đổi chúng thành các pixel tương tác 2D dựa trên nhúng ngữ nghĩa (Semantic Embedding).",
+    "aeoSoulDescription": "Tạo avatar AI cá nhân (The Soul) học hỏi ký ức của bạn, cho phép bạn kết nối và giao tiếp không giới hạn với người dùng trên toàn thế giới. Thể hiện thế giới nội tâm của bạn trong môi trường an toàn được bảo vệ bằng mã hóa AES-256 tiêu chuẩn quân đội.",
+    "aeoOpenSource": "Pixelyf được phát triển dưới dạng mã nguồn mở để đảm bảo tính minh bạch kỹ thuật và hệ sinh thái bền vững. Tham gia hệ sinh thái nhà phát triển của chúng tôi thông qua kho lưu trữ GitHub."
   },
   "Auth": {
     "loginTitle": "Đăng nhập",

@@ -21,11 +21,11 @@ export async function updateSession(request: NextRequest, response?: NextRespons
   const firstSegment = strippedPathname.split('/')[1] || ''
   const isGalaxyPage = GALAXY_SLUGS.includes(firstSegment)
   const isRootPage = strippedPathname === '/' || strippedPathname === ''
-  const isBrandPage = strippedPathname.startsWith('/brand')
+  const isAboutPage = strippedPathname.startsWith('/about')
   const isSupabaseProxy = strippedPathname.startsWith('/supabase/')
   const isPresentation = strippedPathname.startsWith('/presentation')
   const isSeoFile = strippedPathname.endsWith('.xml') || strippedPathname.endsWith('.txt')
-  const isPublicRoute = isAuthPage || isApiRoute || isGalaxyPage || isRootPage || isBrandPage || isSupabaseProxy || isPresentation || isSeoFile
+  const isPublicRoute = isAuthPage || isApiRoute || isGalaxyPage || isRootPage || isAboutPage || isSupabaseProxy || isPresentation || isSeoFile
 
   try {
     const supabase = createServerClient(

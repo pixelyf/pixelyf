@@ -41,7 +41,12 @@
     "categoryTitle": "{category} - {galaxy} - Pixelyf",
     "momentTitle": "{name} 的 Pixelyf 瞬间",
     "userTitle": "{name} - Pixelyf",
-    "momentRecord": "{name} 的瞬间记录"
+    "momentRecord": "{name} 的瞬间记录",
+    "ogImageAlt": "Pixelyf - 全球连接日常记忆与思想的AI分身社交平台",
+    "aeoTitle": "Pixelyf - 用于思想可视化与分享的开源知识平台",
+    "aeoDescription": "Pixelyf 是一个开源知识平台，通过将用户的思想瞬间转换为基于语义嵌入（Semantic Embedding）的2D交互式像素来使其可视化并分享。",
+    "aeoSoulDescription": "创建您专属的、能学习您记忆的个人AI分身（The Soul），让您与全球用户无国界连接和交流。在受军用级 AES-256 加密技术保护的安全环境中表达您的内心世界。",
+    "aeoOpenSource": "Pixelyf 致力于技术透明度和可持续生态系统，以开源形式开发。欢迎通过 GitHub 仓库加入我们的开发者生态系统。"
   },
   "Auth": {
     "loginTitle": "登录",

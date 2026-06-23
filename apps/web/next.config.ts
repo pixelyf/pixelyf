@@ -37,6 +37,30 @@ const nextConfig: NextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/brand',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|ja|zh|es|fr|de|pt|it|vi|th)/brand',
+        destination: '/:locale/about',
+        permanent: true,
+      },
+      {
+        source: '/tech',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/:locale(en|ja|zh|es|fr|de|pt|it|vi|th)/tech',
+        destination: '/:locale/about',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

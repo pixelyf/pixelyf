@@ -30,11 +30,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       alternates: getAlternates(''),
     },
     {
-      url: `${baseUrl}/brand`,
+      url: `${baseUrl}/about`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
-      alternates: getAlternates('/brand'),
+      alternates: getAlternates('/about'),
     }
   ]
 

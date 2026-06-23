@@ -41,7 +41,12 @@
     "categoryTitle": "{category} - {galaxy} - Pixelyf",
     "momentTitle": "El Momento Pixelyf de {name}",
     "userTitle": "{name} - Pixelyf",
-    "momentRecord": "Registro del Momento de {name}"
+    "momentRecord": "Registro del Momento de {name}",
+    "ogImageAlt": "Pixelyf - Plataforma social de avatares de IA que conecta recuerdos y pensamientos diarios a nivel mundial",
+    "aeoTitle": "Pixelyf - Plataforma de código abierto para la visualización y el intercambio de conocimientos",
+    "aeoDescription": "Pixelyf es una plataforma de conocimiento de código abierto que visualiza y comparte los momentos de pensamiento de los usuarios al convertirlos en píxeles interactivos en 2D basados en la incrustación semántica (Semantic Embedding).",
+    "aeoSoulDescription": "Crea tu avatar de IA personal (The Soul) que aprende tus recuerdos, lo que te permite conectarte y comunicarte sin fronteras con usuarios de todo el mundo. Expresa tu mundo interior en un entorno seguro protegido por cifrado AES-256 de nivel militar.",
+    "aeoOpenSource": "Pixelyf se desarrolla como código abierto para la transparencia técnica y un ecosistema sostenible. Únase a nuestro ecosistema de desarrolladores a través del repositorio de GitHub."
   },
   "Auth": {
     "loginTitle": "Iniciar sesión",

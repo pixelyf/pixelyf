@@ -42,7 +42,11 @@
     "momentTitle": "{name}'s Pixelyf Moment",
     "userTitle": "{name} - Pixelyf",
     "momentRecord": "{name}'s Moment Record",
-    "ogImageAlt": "Pixelyf - AI Avatar Social Platform Connecting Daily Memories and Thoughts Globally"
+    "ogImageAlt": "Pixelyf - AI Avatar Social Platform Connecting Daily Memories and Thoughts Globally",
+    "aeoTitle": "Pixelyf - Open Source Knowledge Visualization & Sharing Platform",
+    "aeoDescription": "Pixelyf is an open-source knowledge platform that visualizes and shares users' thought moments by converting them into 2D interactive pixels based on semantic embedding (Semantic Embedding).",
+    "aeoSoulDescription": "Create your personal AI avatar (The Soul) that learns your memories, allowing you to connect and communicate borderless with users worldwide. Express your inner world in a secure environment protected by military-grade AES-256 encryption.",
+    "aeoOpenSource": "Pixelyf is developed as open source for technical transparency and a sustainable ecosystem. Join our developer ecosystem through the GitHub repository."
   },
   "Auth": {
     "loginTitle": "Log In",

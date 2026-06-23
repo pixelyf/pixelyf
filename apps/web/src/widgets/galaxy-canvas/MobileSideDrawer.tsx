@@ -407,7 +407,7 @@ export function MobileSideDrawer({ isOpen, onClose, currentViewMode }: MobileSid
 
                 {/* 브랜드 스토리 */}
                 <button
-                  onClick={() => handleNavigate('/brand')}
+                  onClick={() => handleNavigate('/about')}
                   className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-white/70 hover:bg-white/5 hover:text-white transition-all group"
                 >
                   <Star className="w-4 h-4 text-white/70 group-hover:text-white transition-colors" />
