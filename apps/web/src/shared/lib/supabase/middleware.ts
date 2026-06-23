@@ -24,7 +24,8 @@ export async function updateSession(request: NextRequest, response?: NextRespons
   const isBrandPage = strippedPathname.startsWith('/brand')
   const isSupabaseProxy = strippedPathname.startsWith('/supabase/')
   const isPresentation = strippedPathname.startsWith('/presentation')
-  const isPublicRoute = isAuthPage || isApiRoute || isGalaxyPage || isRootPage || isBrandPage || isSupabaseProxy || isPresentation
+  const isSeoFile = strippedPathname.endsWith('.xml') || strippedPathname.endsWith('.txt')
+  const isPublicRoute = isAuthPage || isApiRoute || isGalaxyPage || isRootPage || isBrandPage || isSupabaseProxy || isPresentation || isSeoFile
 
   try {
     const supabase = createServerClient(
