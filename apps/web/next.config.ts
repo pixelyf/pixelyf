@@ -6,6 +6,9 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: false,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
   allowedDevOrigins: ['172.30.1.56', '172.30.1.60', '127.0.0.1', 'localhost', '172.30.1.52', '172.30.1.64'],
   serverExternalPackages: ['@prisma/client', 'pg'],
   images: {
