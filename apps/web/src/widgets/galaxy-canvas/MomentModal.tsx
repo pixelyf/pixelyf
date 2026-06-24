@@ -580,14 +580,14 @@ export function MomentModal({ isOpen, onClose, bgColor }: { isOpen: boolean; onC
             <div className="relative">
               <textarea
                 value={content}
-                onChange={(e) => setContent(e.target.value.slice(0, 140))}
-                maxLength={140}
+                onChange={(e) => setContent(e.target.value.slice(0, 500))}
+                maxLength={500}
                 placeholder={t('placeholder')}
                 className="w-full h-32 bg-slate-950/50 border border-slate-800 rounded-2xl p-4 pb-8 text-[15px] leading-relaxed text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none transition-all"
                 disabled={isSubmitting}
               />
-              <div className={`absolute bottom-3 right-4 text-xs font-medium transition-colors ${content.length >= 140 ? 'text-red-400' : 'text-slate-500'}`}>
-                {content.length} / 140
+              <div className={`absolute bottom-3 right-4 text-xs font-medium transition-colors ${content.length >= 500 ? 'text-red-400' : 'text-slate-500'}`}>
+                {content.length} / 500
               </div>
             </div>
 

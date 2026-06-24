@@ -269,7 +269,7 @@ export function usePixelFeed({ selectedPixelId, pixel, isStore = false, activeTa
   // ── 모먼트 수정 핸들러 ──
   const handleEditMoment = async (momentId: string) => {
     const trimmed = editContent.trim()
-    if (!trimmed || trimmed.length > 140) return
+    if (!trimmed || trimmed.length > 500) return
 
     try {
       let newUploadedImages: FeedImage[] = []

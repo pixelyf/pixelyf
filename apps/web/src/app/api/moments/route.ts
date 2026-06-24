@@ -301,8 +301,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Content, image, or YouTube URL is required' }, { status: 400 })
     }
 
-    if (trimmedContent && trimmedContent.length > 140) {
-      return NextResponse.json({ error: 'Content exceeds 140 characters' }, { status: 400 })
+    if (trimmedContent && trimmedContent.length > 500) {
+      return NextResponse.json({ error: 'Content exceeds 500 characters' }, { status: 400 })
     }
 
     // Aura Sync

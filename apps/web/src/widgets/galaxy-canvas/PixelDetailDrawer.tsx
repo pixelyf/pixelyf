@@ -300,7 +300,7 @@ const MomentCard = React.memo(function MomentCard({
           <textarea
             value={editContent}
             onChange={(e) => setEditContent(e.target.value)}
-            maxLength={140}
+            maxLength={500}
             rows={3}
             onFocus={() => setIsTextareaFocused(true)}
             onBlur={() => setIsTextareaFocused(false)}
@@ -511,7 +511,7 @@ const MomentCard = React.memo(function MomentCard({
 
           <div className="flex items-center justify-between">
             <span className="text-xs text-slate-400 font-medium">
-              {editContent.length}/140
+              {editContent.length}/500
             </span>
             <div className="flex gap-2">
               <button
@@ -534,7 +534,7 @@ const MomentCard = React.memo(function MomentCard({
               <button
                 onClick={() => handleEditMoment(moment.id)}
                 disabled={
-                  !editContent.trim() || editContent.trim().length > 140
+                  !editContent.trim() || editContent.trim().length > 500
                 }
                 className="px-4 py-1.5 text-white rounded-lg text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed transition hover:brightness-110 active:scale-95"
                 style={{ backgroundColor: moodColor.primaryHex }}

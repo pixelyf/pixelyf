@@ -31,8 +31,8 @@ export async function PUT(
     if (!trimmedContent) {
       return NextResponse.json({ error: 'Content is required' }, { status: 400 })
     }
-    if (trimmedContent.length > 140) {
-      return NextResponse.json({ error: 'Content exceeds 140 characters' }, { status: 400 })
+    if (trimmedContent.length > 500) {
+      return NextResponse.json({ error: 'Content exceeds 500 characters' }, { status: 400 })
     }
 
     // 소유권 검증: 본인의 모먼트만 수정 가능 및 변경 감지용 기존 본문 SELECT

@@ -681,7 +681,8 @@ export function SearchFeedDrawer() {
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isMobile || !isPullingRef.current || isRefreshing || selectedPixelId) return;
+    if (!isMobile || !isPullingRef.current || isRefreshing || selectedPixelId)
+      return;
     const currentY = e.touches[0].clientY;
     const deltaY = currentY - touchStartY.current;
 
@@ -999,7 +1000,10 @@ export function SearchFeedDrawer() {
         >
           {/* 데스크탑 타이틀 */}
           {!isMobile && (
-            <div data-tour="drawer-search" className="p-5 border-b flex flex-col gap-3 border-theme">
+            <div
+              data-tour="drawer-search"
+              className="p-5 border-b flex flex-col gap-3 border-theme"
+            >
               {/* ── 일반 은하: 기존 검색 + 스코프 헤더 ── */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -1193,7 +1197,11 @@ export function SearchFeedDrawer() {
               <span>{t("feed")}</span>
               {feedType === "moment" && (
                 <motion.div
-                  layoutId={pullDistance > 0 || isRefreshing ? undefined : "searchFeedTypeUnderline"}
+                  layoutId={
+                    pullDistance > 0 || isRefreshing
+                      ? undefined
+                      : "searchFeedTypeUnderline"
+                  }
                   className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full"
                   style={{ backgroundColor: moodColor.primaryHex }}
                   transition={{ type: "spring", damping: 30, stiffness: 280 }}
@@ -1211,7 +1219,11 @@ export function SearchFeedDrawer() {
               <span>{t("community")}</span>
               {feedType === "community" && (
                 <motion.div
-                  layoutId={pullDistance > 0 || isRefreshing ? undefined : "searchFeedTypeUnderline"}
+                  layoutId={
+                    pullDistance > 0 || isRefreshing
+                      ? undefined
+                      : "searchFeedTypeUnderline"
+                  }
                   className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full"
                   style={{ backgroundColor: moodColor.primaryHex }}
                   transition={{ type: "spring", damping: 30, stiffness: 280 }}
@@ -1375,7 +1387,7 @@ export function SearchFeedDrawer() {
       {/* 피드 리스트 (슬라이드 애니메이션 & UX 피드백) */}
       <div
         data-tour="drawer-list"
-        className={`flex-1 transition-opacity duration-200 ${isMobile ? "flex flex-col px-0 py-0" : "overflow-y-auto overflow-x-hidden custom-scrollbar py-5 pl-5 pr-1.5 space-y-2.5"} ${searchTerm !== debouncedSearchTerm ? "opacity-40 pointer-events-none" : "opacity-100"}`}
+        className={`flex-1 transition-opacity duration-200 ${isMobile ? "flex flex-col px-0 py-0" : "overflow-y-auto overflow-x-hidden custom-scrollbar py-5 pl-4 pr-3 space-y-2.5"} ${searchTerm !== debouncedSearchTerm ? "opacity-40 pointer-events-none" : "opacity-100"}`}
         key={activeTab}
         style={{
           animation: `slide-in-${slideDirection} 0.2s ease-out`,
