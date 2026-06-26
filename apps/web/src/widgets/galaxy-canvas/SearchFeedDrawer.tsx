@@ -354,7 +354,7 @@ const FeedCard = React.memo(function FeedCard({
   const isMe = userProfile && feed.id === userProfile.id;
   // 내 글이면 전역 스토어의 최신 무드를 실시간 강제 적용, 타인 글이면 feed 객체의 상태 사용
   const activeMoodId = isMe ? currentMoodId : feed.moodId || "neutral";
-  const cardColor = feed.glowPrimary || getMoodColors(activeMoodId).primary;
+  const cardColor = isMe ? getMoodColors(activeMoodId).primary : (feed.glowPrimary || getMoodColors(activeMoodId).primary);
   const isHoveredOrSelected =
     selectedPixelId === feed.id || hoveredPixelId === feed.id;
 
@@ -1555,7 +1555,7 @@ export function SearchFeedDrawer() {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           style={{
-            pointerEvents: selectedPixelId ? "none" : "auto",
+            pointerEvents: "auto",
             ...midnightThemeStyle,
           }}
         >

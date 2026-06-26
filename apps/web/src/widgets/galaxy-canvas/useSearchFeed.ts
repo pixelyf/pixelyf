@@ -294,8 +294,9 @@ export function useSearchFeed({
         if (f.id === pixelId) {
           return {
             ...f,
-            moodId: pixelData.moodId ?? f.moodId,
-            glowPrimary: pixelData.glowColorPrimary ?? f.glowPrimary,
+            moodId: detail?.moodId ?? pixelData.moodId ?? f.moodId,
+            glowPrimary: detail?.glowColorPrimary ?? pixelData.glowColorPrimary ?? f.glowPrimary,
+            glowSecondary: detail?.glowColorSecondary ?? pixelData.glowColorSecondary ?? f.glowSecondary,
             author: pixelData.displayName ?? f.author,
           }
         }

@@ -60,6 +60,8 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
   const thoughtNodes = useGalaxyStore(s => s.thoughtNodes)
   const isPixiReady = useGalaxyStore(s => s.isPixiReady)
   const activeDmRoomId = useGalaxyStore(s => s.activeDmRoomId)
+  const selectedPixelId = useGalaxyStore(s => s.selectedPixelId)
+  const targetFeedItem = useGalaxyStore(s => s.targetFeedItem)
   
   const router = useRouter()
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false)
@@ -260,7 +262,7 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
         {viewMode === 'feed' && (
           <>
             <SearchFeedDrawer />
-            <PixelDetailDrawer />
+            {selectedPixelId && targetFeedItem && <PixelDetailDrawer />}
           </>
         )}
 

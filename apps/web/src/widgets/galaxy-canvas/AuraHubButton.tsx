@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { MomentModal } from './MomentModal'
-import { MOODS, MoodType } from '@/shared/constants/moods'
+import { MOODS, MoodType, getMoodColors } from '@/shared/constants/moods'
 import { Plus, CalendarDays } from 'lucide-react'
 import { useGalaxyStore } from '@/stores/galaxyStore'
 import { useUserStore } from '@/entities/user/model/useUserStore'
@@ -23,12 +23,16 @@ export function AuraHubButton() {
   const containerRef = useRef<HTMLDivElement>(null)
 
   // [FIX] 초기 로그인 시 DB에 저장된 무드 ID를 스토어에 동기화
-  // Rules of Hooks: useEffect는 early return 앞에 위치해야 함
+  // Rules of Hooks: useEffect는 early return 앞에 위치해야 함.
+  // 사용자 선택 직후 currentMoodId 변경만으로 이 effect가 다시 실행되면
+  // 아직 갱신 전인 user.current_mood_id가 낙관적 상태를 되돌릴 수 있으므로
+  // 서버 user 값이 바뀌는 시점에만 동기화한다.
   useEffect(() => {
     if (user?.current_mood_id && user.current_mood_id !== currentMoodId) {
       setMood(user.current_mood_id)
     }
-  }, [user?.current_mood_id, currentMoodId, setMood])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, user?.current_mood_id, setMood])
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -51,9 +55,20 @@ export function AuraHubButton() {
   const selected = MOODS.find(m => m.id === currentMoodId) ?? MOODS[0]
 
   const handleAuraSelect = async (mood: MoodType) => {
-    // 1. 즉각적인 UI 반영 (Galaxy Store)
+    // 1. 즉각적인 UI 반영 (Galaxy Store + User Store + local pixel/feed)
     setMood(mood.id)
+    setUser({ ...user, current_mood_id: mood.id })
     setIsOpen(false)
+
+    window.dispatchEvent(new CustomEvent('pixel-updated', {
+      detail: {
+        pixelId: user.id,
+        field: 'mood',
+        moodId: mood.id,
+        glowColorPrimary: getMoodColors(mood.id).primary,
+        glowColorSecondary: getMoodColors(mood.id).secondary,
+      },
+    }))
     
     // 2. Sync to DB
     try {
@@ -67,10 +82,22 @@ export function AuraHubButton() {
       })
 
       if (res.ok && user) {
+        const data = await res.json().catch(() => null)
         // 3. [FIX]: DB 업데이트 성공 시 User Store도 즉시 업데이트
         // 이를 통해 useEffect(user?.current_mood_id)가 이전 값으로 리버트하는 것을 방지
         console.log(`[AuraHub] Mood Update Success: ${mood.label}`);
         setUser({ ...user, current_mood_id: mood.id })
+
+        window.dispatchEvent(new CustomEvent('pixel-updated', {
+          detail: {
+            pixelId: user.id,
+            field: 'mood',
+            moodId: mood.id,
+            aura: data?.aura,
+            glowColorPrimary: getMoodColors(mood.id).primary,
+            glowColorSecondary: getMoodColors(mood.id).secondary,
+          },
+        }))
         
         // 내 생각 그래프(Mood History) 캐시 무효화하여 최신 상태 즉시 반영
         mutate(

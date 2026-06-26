@@ -9,14 +9,19 @@ export function useScrollLock() {
   const mobileViewMode = useGalaxyStore(s => s.mobileViewMode)
   
   const selectedPixelId = useGalaxyStore(s => s.selectedPixelId)
+  const targetFeedItem = useGalaxyStore(s => s.targetFeedItem)
   const selectedThoughtId = useGalaxyStore(s => s.selectedThoughtId)
   const activeDmRoomId = useGalaxyStore(s => s.activeDmRoomId)
   const isSettingsOpen = useGalaxyStore(s => s.isSettingsOpen)
   const isInsightOpen = useGalaxyStore(s => s.isInsightOpen)
   const isMomentModalOpen = useGalaxyStore(s => s.isMomentModalOpen)
 
+  const isPixelPopupOpen = Boolean(
+    selectedPixelId && (!isMobile || mobileViewMode === 'canvas' || targetFeedItem)
+  )
+
   const isAnyPopupOpen = Boolean(
-    selectedPixelId ||
+    isPixelPopupOpen ||
     selectedThoughtId ||
     activeDmRoomId ||
     isSettingsOpen ||

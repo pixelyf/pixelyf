@@ -10,6 +10,7 @@
  */
 import { VISUAL_SCALE } from '@/shared/constants/personas'
 import { PingId } from '@/shared/constants/pings'
+import { getMoodColors } from '@/shared/constants/moods'
 import { useGalaxyStore, type PixelData, type ConstellationBond, DEFAULT_MOOD_ID } from '@/stores/galaxyStore'
 import { useUserStore } from '@/entities/user/model/useUserStore'
 import { idbGet, idbSet } from '@/shared/lib/idb'
@@ -763,11 +764,18 @@ export function initDataSync(deps: DataSyncDeps): DataSyncResult {
 
     const handlePixelUpdate = (e: any) => {
       if (!e.detail?.pixelId) return
-      const { pixelId, field, delta } = e.detail
+      const { pixelId, field, delta, moodId, glowColorPrimary, glowColorSecondary } = e.detail
       const target = spatialGrid.getPixel(pixelId)
       if (target) {
         if (field === 'touchCount') {
           target.touchCount = Math.max(0, (target.touchCount || 0) + (delta || 1))
+          const activeSprite = spritePoolRef?.getActiveSprite(pixelId)
+          if (activeSprite) activeSprite.updateData(target)
+        } else if (field === 'mood') {
+          const colors = getMoodColors(moodId || DEFAULT_MOOD_ID)
+          target.moodId = moodId || target.moodId
+          target.glowColorPrimary = glowColorPrimary || colors.primary
+          target.glowColorSecondary = glowColorSecondary || colors.secondary
           const activeSprite = spritePoolRef?.getActiveSprite(pixelId)
           if (activeSprite) activeSprite.updateData(target)
         }
