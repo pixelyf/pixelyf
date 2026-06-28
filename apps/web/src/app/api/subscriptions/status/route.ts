@@ -45,9 +45,9 @@ export async function GET(request: Request) {
       }),
     ])
 
-    const isActive = subscription?.status === 'active' &&
-      subscription.expires_at &&
-      new Date(subscription.expires_at) > new Date()
+    const isActive = subscription?.status === 'active' && (
+      !subscription.expires_at || new Date(subscription.expires_at) > new Date()
+    )
 
     return NextResponse.json({
       isSubscribed: !!isActive,

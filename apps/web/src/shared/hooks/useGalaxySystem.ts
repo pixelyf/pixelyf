@@ -90,14 +90,14 @@ export function useGalaxySystem() {
 
   const getCategoriesByGalaxy = useCallback((galaxyKey: string): GalaxySystemCategory[] => {
     const galaxy = galaxies.find(g => g.key === galaxyKey)
-    return galaxy?.categories || []
+    return [...(galaxy?.categories || [])].sort((a, b) => a.sortOrder - b.sortOrder)
   }, [galaxies])
 
   // GALAXY_CATEGORY_MAP 동적 대체: { PIXELYF_CORE: [...] }
   const categoryMap = useMemo(() => {
     const map: Record<string, GalaxySystemCategory[]> = {}
     for (const g of galaxies) {
-      map[g.key] = g.categories
+      map[g.key] = [...g.categories].sort((a, b) => a.sortOrder - b.sortOrder)
     }
     return map
   }, [galaxies])

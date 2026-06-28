@@ -37,6 +37,8 @@ const CATEGORY_DOT_COLORS: Record<string, number> = {
   'CONNECT':               0xEF4444,  // 레드
   'TASTE':                 0xF59E0B,  // 골드
   'ACTION':                0xFBBF24,  // 옐로우
+  'GAME':                  0x00FF9F,  // 라임/그린 (게임)
+  'SHOPPING':              0xFF5E57,  // 오렌지/레드 (쇼핑)
 
   // 기타 은하 카테고리
   'INQUE':                 0x6366F1,  // 분석가 (인디고)
@@ -53,6 +55,7 @@ const CATEGORY_KOREAN_LABELS: Record<string, string> = {
   'SPARK': '영감', 'CREATIVE': '창작', 'CREATE': '창작',
   'GROWTH': '성장', 'DAILY': '일상', 'THOUGHTS': '생각',
   'CONNECT': '관계', 'TASTE': '취향', 'ACTION': '실천',
+  'GAME': '게임', 'SHOPPING': '쇼핑',
 
   // 기타 은하
   'INQUE': '분석가',

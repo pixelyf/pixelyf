@@ -102,8 +102,8 @@ export function initThoughtGraph(config: ThoughtGraphConfig): {
         camera.moveTo(center.x * VISUAL_SCALE, center.y * VISUAL_SCALE, 0.4)
         camera.zoomTo(0.35, 0.4)
 
-        // 1. 캐시 점검 및 증분 유효성 판단
-        const cacheKey = `tg-layout:${currentGalaxyKey}:${thoughtScope}`
+        // 1. 캐시 점검 및 증분 유효성 판단 (전체 지식그래프와 내 생각그래프 좌표 공통화를 위해 은하 레벨로 통합)
+        const cacheKey = `tg-layout:${currentGalaxyKey}`
         const cachedLayoutStr = localStorage.getItem(cacheKey)
         let cachedCoordsMap: Record<string, { x: number; y: number }> | null = null
         let allNodesCached = false
@@ -162,18 +162,20 @@ export function initThoughtGraph(config: ThoughtGraphConfig): {
             thoughtWorkerRef.current = new Worker(
               new URL('../../../shared/lib/thought-graph/ThoughtGraphWorker.ts', import.meta.url)
             )
-            thoughtWorkerRef.current.onmessage = (event) => {
-              const { type, coords } = event.data
-              if (type === 'TICK') {
-                const currentZoom = camera.viewport.zoom
-                thoughtRendererRef.current?.updatePositions(coords, currentZoom)
-              } else if (type === 'END') {
-                const map: Record<string, { x: number; y: number }> = {}
-                coords.forEach((c: any) => {
-                  map[c.id] = { x: c.x, y: c.y }
-                })
-                localStorage.setItem(cacheKey, JSON.stringify(map))
-              }
+          }
+
+          // 매번 최신 cacheKey 클로저를 바라볼 수 있도록 onmessage 재바인딩
+          thoughtWorkerRef.current.onmessage = (event) => {
+            const { type, coords } = event.data
+            if (type === 'TICK') {
+              const currentZoom = camera.viewport.zoom
+              thoughtRendererRef.current?.updatePositions(coords, currentZoom)
+            } else if (type === 'END') {
+              const map: Record<string, { x: number; y: number }> = {}
+              coords.forEach((c: any) => {
+                map[c.id] = { x: c.x, y: c.y }
+              })
+              localStorage.setItem(cacheKey, JSON.stringify(map))
             }
           }
 

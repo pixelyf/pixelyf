@@ -87,7 +87,7 @@ export function MobileSideDrawer({ isOpen, onClose, currentViewMode }: MobileSid
   const backdropRef = useRef<HTMLDivElement>(null)
 
   // 현재 은하의 카테고리 목록
-  const currentCategories = categoryMap[galaxyKey] || []
+  const currentCategories = [...(categoryMap[galaxyKey] || [])].sort((a, b) => a.sortOrder - b.sortOrder)
 
   // ── 유저 지표 데이터 가공 ──
   const currentMood = user?.current_mood_id
@@ -306,7 +306,7 @@ export function MobileSideDrawer({ isOpen, onClose, currentViewMode }: MobileSid
                                 </button>
 
                                 {/* 카테고리: 개별 목록 */}
-                                {cats.map(cat => (
+                                {[...cats].sort((a, b) => a.sortOrder - b.sortOrder).map(cat => (
                                   <button
                                     key={cat.key}
                                     onClick={() => {

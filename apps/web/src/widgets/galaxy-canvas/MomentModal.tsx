@@ -476,7 +476,7 @@ export function MomentModal({ isOpen, onClose, bgColor }: { isOpen: boolean; onC
                     <div key="category-combo-backdrop" className="fixed inset-0 z-40" onClick={() => setIsCategoryDropdownOpen(false)} />
                     
                     <div key="category-combo-dropdown" className="absolute left-0 right-0 mt-1.5 z-50 max-h-60 overflow-y-auto bg-[#0b0f19]/95 backdrop-blur-lg border border-white/10 rounded-xl shadow-2xl py-1 animate-in fade-in slide-in-from-top-1.5 duration-200 scrollbar-hide">
-                      {getCategoriesByGalaxy(selectedGalaxy).map((cat) => {
+                      {[...getCategoriesByGalaxy(selectedGalaxy)].sort((a, b) => a.sortOrder - b.sortOrder).map((cat) => {
                         const isSelected = selectedCategory === cat.key
                         return (
                           <button

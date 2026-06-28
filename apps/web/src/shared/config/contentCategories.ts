@@ -19,7 +19,9 @@ export type ContentCategory =
   | "LIFE"
   | "BUSINESS"
   | "DAILY"
-  | "THOUGHTS";
+  | "THOUGHTS"
+  | "GAME"
+  | "SHOPPING";
 
 export type CategoryMeta = {
   key: ContentCategory;
@@ -230,6 +232,40 @@ export const CATEGORY_META: Record<ContentCategory, CategoryMeta> = {
       { key: "EMOTION", labelKo: "감정", labelEn: "Emotion", category: "THOUGHTS" },
       { key: "CONTEMPLATION", labelKo: "사색", labelEn: "Contemplation", category: "THOUGHTS" },
       { key: "IDEA", labelKo: "아이디어", labelEn: "Idea", category: "THOUGHTS" },
+    ],
+  },
+
+  GAME: {
+    key: "GAME",
+    labelKo: "게임",
+    labelEn: "Gaming",
+    emoji: "🎮",
+    starColor: "#00FF9F",
+    accentColor: "#00D180",
+    descriptionKo: "e스포츠, 신작 게임, PC/모바일 게임 정보와 소통",
+    descriptionEn: "eSports, new releases, PC/mobile gaming info and communication",
+    tags: [
+      { key: "ESPORTS", labelKo: "e스포츠", labelEn: "eSports", category: "GAME" },
+      { key: "MOBILE_GAME", labelKo: "모바일 게임", labelEn: "Mobile Game", category: "GAME" },
+      { key: "PC_GAME", labelKo: "PC 게임", labelEn: "PC Game", category: "GAME" },
+      { key: "CONSOLE_GAME", labelKo: "콘솔 게임", labelEn: "Console Game", category: "GAME" },
+    ],
+  },
+
+  SHOPPING: {
+    key: "SHOPPING",
+    labelKo: "쇼핑",
+    labelEn: "Shopping",
+    emoji: "🛒",
+    starColor: "#FF5E57",
+    accentColor: "#E23E3A",
+    descriptionKo: "핫딜, 쇼핑 아이템 정보, 추천 제품, 리뷰",
+    descriptionEn: "Hot deals, shopping item info, recommended products, reviews",
+    tags: [
+      { key: "HOT_DEAL", labelKo: "핫딜", labelEn: "Hot Deal", category: "SHOPPING" },
+      { key: "FASHION_ITEM", labelKo: "패션 템", labelEn: "Fashion Item", category: "SHOPPING" },
+      { key: "BEAUTY_ITEM", labelKo: "뷰티 템", labelEn: "Beauty Item", category: "SHOPPING" },
+      { key: "SHOPPING_TIP", labelKo: "쇼핑 팁", labelEn: "Shopping Tip", category: "SHOPPING" },
     ],
   },
 };

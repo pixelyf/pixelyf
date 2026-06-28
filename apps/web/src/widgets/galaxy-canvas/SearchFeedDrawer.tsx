@@ -1281,7 +1281,7 @@ export function SearchFeedDrawer() {
                   {tS("allTab")}
                 </button>
                 {/* 현재 은하의 카테고리 칩 (DB 동적) */}
-                {(categoryMap[galaxyKey] || []).map((cat) => {
+                {[...(categoryMap[galaxyKey] || [])].sort((a, b) => a.sortOrder - b.sortOrder).map((cat) => {
                   const isActive = activeCategory === cat.key;
                   return (
                     <button

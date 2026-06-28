@@ -75,6 +75,9 @@ self.onmessage = (e: MessageEvent) => {
       id: n.id,
       x: n.x !== undefined ? n.x - centerX : (Math.random() - 0.5) * 800,
       y: n.y !== undefined ? n.y - centerY : (Math.random() - 0.5) * 800,
+      // 캐싱된 좌표가 있으면 물리 시뮬레이션 상 위치를 완전히 고정(pinning)
+      fx: n.x !== undefined ? n.x - centerX : undefined,
+      fy: n.y !== undefined ? n.y - centerY : undefined,
       category: n.category
     }));
 

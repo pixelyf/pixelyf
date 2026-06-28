@@ -21,10 +21,17 @@ export async function GET() {
     const activeSubs = await prisma.thought_subscriptions.findMany({
       where: {
         status: 'active',
-        expires_at: { gt: new Date() },
         OR: [
-          { subscriber_id: user.id },
-          { creator_id: user.id },
+          { expires_at: null },
+          { expires_at: { gt: new Date() } }
+        ],
+        AND: [
+          {
+            OR: [
+              { subscriber_id: user.id },
+              { creator_id: user.id },
+            ]
+          }
         ]
       },
       select: {

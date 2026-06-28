@@ -160,6 +160,48 @@ async function main() {
         { locale: 'th', name: 'ความคิด', description: 'บันทึกความคิดที่ลึกซึ้งและการสะท้อนคิด' }
       ]
     },
+    {
+      key: 'GAME',
+      name: '게임',
+      icon: 'Gamepad2',
+      color: '#00FF9F',
+      type: 'view_mode',
+      sortOrder: 10,
+      translations: [
+        { locale: 'ko', name: '게임', description: 'e스포츠 및 모바일/PC 게임' },
+        { locale: 'en', name: 'Gaming', description: 'eSports & Mobile/PC Gaming' },
+        { locale: 'ja', name: 'ゲーム', description: 'eスポーツとモバイル/PCゲーム' },
+        { locale: 'zh', name: '游戏', description: '电子竞技和手机/电脑游戏' },
+        { locale: 'es', name: 'Videojuegos', description: 'eSports y juegos para móviles/PC' },
+        { locale: 'fr', name: 'Jeux', description: 'eSports et jeux mobiles/PC' },
+        { locale: 'de', name: 'Spielen', description: 'eSports und Mobil-/PC-Spiele' },
+        { locale: 'pt', name: 'Jogos', description: 'eSports e jogos para celular/PC' },
+        { locale: 'it', name: 'Giochi', description: 'eSports e giochi per dispositivi mobili/PC' },
+        { locale: 'vi', name: 'Trò chơi', description: 'eSports và trò chơi di động/PC' },
+        { locale: 'th', name: 'เกม', description: 'อีสปอร์ตและเกมมือถือ/พีซี' }
+      ]
+    },
+    {
+      key: 'SHOPPING',
+      name: '쇼핑',
+      icon: 'ShoppingBag',
+      color: '#FF5E57',
+      type: 'view_mode',
+      sortOrder: 11,
+      translations: [
+        { locale: 'ko', name: '쇼핑', description: '한국 브랜드 및 쇼핑 팁' },
+        { locale: 'en', name: 'Shopping', description: 'Korean Brands & Shopping Tips' },
+        { locale: 'ja', name: 'ショッピング', description: '韓国ブランドとショッピングのヒント' },
+        { locale: 'zh', name: '购物', description: '韩国品牌和购物技巧' },
+        { locale: 'es', name: 'Compras', description: 'Marcas coreanas y consejos de compra' },
+        { locale: 'fr', name: 'Achats', description: 'Marques coréennes et conseils d\'achat' },
+        { locale: 'de', name: 'Einkaufen', description: 'Koreanische Marken und Shopping-Tipps' },
+        { locale: 'pt', name: 'Compras', description: 'Marcas coreanas e dicas de compras' },
+        { locale: 'it', name: 'Shopping', description: 'Marchi coreani e consigli per lo shopping' },
+        { locale: 'vi', name: 'Mua sắm', description: 'Thương hiệu Hàn Quốc & mẹo mua sắm' },
+        { locale: 'th', name: 'ช้อปปิ้ง', description: 'แบรนด์เกาหลีและเคล็ดลับการช้อปปิ้ง' }
+      ]
+    }
   ]
 
   const galaxy = await prisma.galaxy.findUnique({ where: { key: 'PIXELYF' } })

@@ -102,6 +102,22 @@ const GALAXY_VIEW_CATEGORIES = [
     type: "view_mode",
     sortOrder: 8,
   },
+  {
+    key: "GAME",
+    name: "게임",
+    icon: "Gamepad2",
+    color: "#00FF9F",
+    type: "view_mode",
+    sortOrder: 9,
+  },
+  {
+    key: "SHOPPING",
+    name: "쇼핑",
+    icon: "ShoppingBag",
+    color: "#FF5E57",
+    type: "view_mode",
+    sortOrder: 10,
+  },
 ];
 
 const CATEGORY_TRANSLATIONS: Record<string, Record<string, string>> = {
@@ -221,6 +237,32 @@ const CATEGORY_TRANSLATIONS: Record<string, Record<string, string>> = {
     it: "Quotidiano",
     vi: "Hằng ngày",
     th: "ประจำวัน",
+  },
+  GAME: {
+    ko: "게임",
+    en: "Gaming",
+    ja: "ゲーム",
+    zh: "游戏",
+    es: "Videojuegos",
+    fr: "Jeux",
+    de: "Spielen",
+    pt: "Jogos",
+    it: "Giochi",
+    vi: "Trò chơi",
+    th: "เกม",
+  },
+  SHOPPING: {
+    ko: "쇼핑",
+    en: "Shopping",
+    ja: "ショッピング",
+    zh: "购物",
+    es: "Compras",
+    fr: "Achats",
+    de: "Einkaufen",
+    pt: "Compras",
+    it: "Shopping",
+    vi: "Mua sắm",
+    th: "ช้อปปิ้ง",
   },
 };
 

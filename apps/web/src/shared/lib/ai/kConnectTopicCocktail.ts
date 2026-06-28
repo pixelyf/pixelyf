@@ -128,6 +128,20 @@ export const K_CONNECT_INGREDIENTS: KConnectIngredient[] = [
     hintEn: "Talk about Korean startups or companies going global",
     weight: 1,
   },
+  {
+    code: "O",
+    categories: ["GAME"],
+    hintKo: "최근 즐겨하는 게임이나 한국의 e스포츠 리그에 대해 이야기하기",
+    hintEn: "Talk about your favorite game or Korean eSports leagues",
+    weight: 2,
+  },
+  {
+    code: "P",
+    categories: ["SHOPPING"],
+    hintKo: "한국 쇼핑몰 핫딜 정보나 추천하는 패션/뷰티 아이템 리뷰",
+    hintEn: "Discuss hot deals on Korean shopping malls or reviews of fashion/beauty items",
+    weight: 2,
+  },
 ];
 
 // ──────────────────────────────────────────────────────────

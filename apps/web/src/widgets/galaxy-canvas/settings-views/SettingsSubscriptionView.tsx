@@ -97,7 +97,7 @@ export function SettingsSubscriptionView() {
       {activeSubTab === 'mine' && (
         <div className="space-y-6">
           {/* 잔고 부족 경고 배너 */}
-          {subscriberStats.isBalanceLow && mySubscriptions.length > 0 && (
+          {subscriberStats.isBalanceLow && subscriberStats.totalMonthlyCost > 0 && mySubscriptions.length > 0 && (
             <div className="flex items-start gap-3 p-4 rounded-2xl bg-red-500/10 border border-red-500/25">
               <AlertTriangle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
               <div>
@@ -130,7 +130,11 @@ export function SettingsSubscriptionView() {
                             <span className="text-white/90 mr-1">@</span>{sub.displayName}
                           </p>
                           <div className="flex items-center gap-3">
-                            <span className="text-xs font-bold text-amber-500">{sub.monthlyCost.toLocaleString()} SD/월</span>
+                            {sub.monthlyCost > 0 ? (
+                              <span className="text-xs font-bold text-amber-500">{sub.monthlyCost.toLocaleString()} SD/월</span>
+                            ) : (
+                              <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold">무료 구독</span>
+                            )}
                             {dday !== null && (
                               <span className={`text-[12px] font-bold ${getDdayColor(dday)}`}>
                                 {dday <= 0 ? t('expired') : `D-${dday}`}
@@ -191,25 +195,29 @@ export function SettingsSubscriptionView() {
           {(revenueStats.totalEarned > 0 || revenueStats.activeSubscribers > 0) && (
             <section>
               <h3 className="text-[16px] font-bold text-white mb-4">{t('revenueTitle')}</h3>
-              <div className="grid grid-cols-3 gap-3">
+              <div className={`grid gap-3 ${revenueStats.totalEarned > 0 ? 'grid-cols-3' : 'grid-cols-1'}`}>
                 {/* 총 누적 수익 */}
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Wallet className="w-3.5 h-3.5 text-amber-400" />
-                    <span className="text-[12px] font-bold text-amber-400/90 uppercase tracking-wider">{t('totalRevenue')}</span>
+                {revenueStats.totalEarned > 0 && (
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Wallet className="w-3.5 h-3.5 text-amber-400" />
+                      <span className="text-[12px] font-bold text-amber-400/90 uppercase tracking-wider">{t('totalRevenue')}</span>
+                    </div>
+                    <p className="text-lg font-black text-white">{revenueStats.totalEarned.toLocaleString()}</p>
+                    <p className="text-[12px] text-white/85 font-medium">SD</p>
                   </div>
-                  <p className="text-lg font-black text-white">{revenueStats.totalEarned.toLocaleString()}</p>
-                  <p className="text-[12px] text-white/85 font-medium">SD</p>
-                </div>
+                )}
                 {/* 이번 달 수익 */}
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Calendar className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="text-[12px] font-bold text-emerald-400/90 uppercase tracking-wider">{t('thisMonth')}</span>
+                {revenueStats.totalEarned > 0 && (
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-[12px] font-bold text-emerald-400/90 uppercase tracking-wider">{t('thisMonth')}</span>
+                    </div>
+                    <p className="text-lg font-black text-white">{revenueStats.monthlyEarned.toLocaleString()}</p>
+                    <p className="text-[12px] text-white/85 font-medium">SD</p>
                   </div>
-                  <p className="text-lg font-black text-white">{revenueStats.monthlyEarned.toLocaleString()}</p>
-                  <p className="text-[12px] text-white/85 font-medium">SD</p>
-                </div>
+                )}
                 {/* 활성 구독자 */}
                 <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
                   <div className="flex items-center gap-1.5 mb-2">

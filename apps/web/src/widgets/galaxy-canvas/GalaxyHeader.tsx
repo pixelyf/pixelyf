@@ -368,7 +368,7 @@ export function GalaxyHeader({ onSearch, title, hideSwitcher, onMenuOpen, onSear
                       <span>{t('allCategory')}</span>
                       {activeCategory === null && <Check className="w-3.5 h-3.5 text-slate-950" />}
                     </button>
-                    {galaxy.categories.map((cat) => (
+                    {[...galaxy.categories].sort((a, b) => a.sortOrder - b.sortOrder).map((cat) => (
                       <button
                         key={cat.key}
                         onClick={() => { navigateToGalaxy(key, cat.key); setIsCategoryOpen(false) }}

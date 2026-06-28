@@ -312,7 +312,7 @@
     "touchSent": "Touch sent",
     "touchCooldown": "Please wait a moment before touching again",
     "confirmConnectMsg": "You are requesting a connection with {name}. A notification will be sent.",
-    "confirmSubscribeMsg": "Register {name} as a regular. 1,000 stardust will be deducted monthly."
+    "confirmSubscribeMsg": "Subscribe to {name} and receive new updates?"
   },
   "Search": {
     "searchContent": "Search moment content...",

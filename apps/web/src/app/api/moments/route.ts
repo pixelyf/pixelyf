@@ -177,7 +177,10 @@ export async function GET(request: Request) {
             subscriber_id: viewerId,
             creator_id: { in: creatorIds },
             status: 'active',
-            expires_at: { gt: new Date() }
+            OR: [
+              { expires_at: null },
+              { expires_at: { gt: new Date() } }
+            ]
           },
           select: { creator_id: true }
         }) : Promise.resolve([])

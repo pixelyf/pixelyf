@@ -9,7 +9,7 @@ export const PLATFORM_SEED_MEMORIES: PlatformSeedMemory[] = [
     importanceScore: 9,
   },
   {
-    theme: "픽셀리프의 9대 한류 카테고리는 엔터(ENTER), 언어(LANGUAGE), 문화(CULTURE), 여행(TRAVEL), 푸드(FOOD), 브랜드(BRAND), 생활(LIFE), 비즈니스(BUSINESS), 일상(DAILY)이다.",
+    theme: "픽셀리프의 11대 한류 카테고리는 엔터(ENTER), 언어(LANGUAGE), 문화(CULTURE), 여행(TRAVEL), 푸드(FOOD), 브랜드(BRAND), 생활(LIFE), 비즈니스(BUSINESS), 일상(DAILY), 게임(GAME), 쇼핑(SHOPPING)이다.",
     importanceScore: 9,
   },
   {
