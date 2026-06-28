@@ -140,7 +140,7 @@
     "clusterUnlearn": "Cúmulo de Desaprendizaje",
     "clusterContinuous": "Cúmulo Continuo",
     "clusterInsideRoom": "Habitación Interior",
-    "clusterSubscription": "Clúster de noticias de clientes habituales",
+    "clusterSubscription": "Clúster de noticias de suscripción",
     "clusterMood": "Galaxia Emocional",
     "trendingLabel": "Tendencia: \"{preview}\" — Recibió {count} Pings en {galaxy}",
     "sideDefaultName": "Pixelier",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "Gráfico de Pensamiento",
     "scopeAll": "Todos los registros",
     "scopeMine": "Mis registros",
-    "subscriptionGalaxy": "Galaxia de noticias de clientes habituales"
+    "subscriptionGalaxy": "Galaxia de noticias de suscripción"
   },
   "Supernova": {
     "title": "Apoyar",
@@ -206,7 +206,7 @@
     "unlearnGalaxy": "Galaxia de Desaprendizaje",
     "continuousGalaxy": "Galaxia Continua",
     "insideRoom": "Habitación Interior",
-    "subscriptionGalaxy": "Galaxia de Suscripción",
+    "subscriptionGalaxy": "Galaxia de noticias de suscripción",
     "resonatingUniverse": "Universo Resonante",
     "notification": "Notificaciones",
     "pingCancelFailed": "Error al cancelar el Ping. Inténtalo de nuevo.",

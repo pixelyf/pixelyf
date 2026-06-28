@@ -140,7 +140,7 @@
     "clusterUnlearn": "Sternhaufen des Verlernens",
     "clusterContinuous": "Kontinuierlicher Sternhaufen",
     "clusterInsideRoom": "Innerer Raum",
-    "clusterSubscription": "Stammgast-News-Cluster",
+    "clusterSubscription": "Abonnement-News-Cluster",
     "clusterMood": "Emotionsgalaxie",
     "trendingLabel": "Trending: \"{preview}\" — {count} Pings in {galaxy} erhalten",
     "sideDefaultName": "Pixelier",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "Gedankengrafik",
     "scopeAll": "Alle Aufzeichnungen",
     "scopeMine": "Meine Aufzeichnungen",
-    "subscriptionGalaxy": "Stammgast-News-Galaxie"
+    "subscriptionGalaxy": "Abonnement-News-Galaxie"
   },
   "Supernova": {
     "title": "Unterstützen",
@@ -206,7 +206,7 @@
     "unlearnGalaxy": "Galaxie des Verlernens",
     "continuousGalaxy": "Kontinuierliche Galaxie",
     "insideRoom": "Innerer Raum",
-    "subscriptionGalaxy": "Abonnement-Galaxie",
+    "subscriptionGalaxy": "Abonnement-News-Galaxie",
     "resonatingUniverse": "Resonierendes Universum",
     "notification": "Benachrichtigungen",
     "pingCancelFailed": "Ping konnte nicht storniert werden. Bitte versuche es erneut.",

@@ -140,7 +140,7 @@
     "clusterUnlearn": "Cụm sao Gạt bỏ định kiến",
     "clusterContinuous": "Cụm sao Khai phá liên tục",
     "clusterInsideRoom": "Căn phòng Nội tâm",
-    "clusterSubscription": "Nhóm tin tức khách quen",
+    "clusterSubscription": "Nhóm tin tức theo dõi",
     "clusterMood": "Thiên hà Cảm xúc",
     "trendingLabel": "Xu hướng: \"{preview}\" — Đã nhận {count} Ping tại {galaxy}",
     "sideDefaultName": "Pixelier",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "Biểu Đồ Tư Duy",
     "scopeAll": "Tất cả ghi chép",
     "scopeMine": "Ghi chép của tôi",
-    "subscriptionGalaxy": "Thiên hài tin tức khách quen"
+    "subscriptionGalaxy": "Thiên hà tin tức theo dõi"
   },
   "Supernova": {
     "title": "Ủng hộ",
@@ -206,7 +206,7 @@
     "unlearnGalaxy": "Thiên hà Gạt bỏ định kiến",
     "continuousGalaxy": "Thiên hà Khai phá liên tục",
     "insideRoom": "Căn phòng Nội tâm",
-    "subscriptionGalaxy": "Thiên hà Theo dõi",
+    "subscriptionGalaxy": "Thiên hà tin tức theo dõi",
     "resonatingUniverse": "Vũ trụ Cộng hưởng",
     "notification": "Thông báo",
     "pingCancelFailed": "Hủy Ping thất bại. Vui lòng thử lại.",

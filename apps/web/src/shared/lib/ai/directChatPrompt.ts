@@ -41,6 +41,9 @@ type DirectChatSystemPromptInput = {
   mode: DirectChatMode
   storeDetail?: DirectChatStoreDetail
   recalledRelationships?: string
+  targetLanguage: string
+  ownerLanguage: string
+  requiresOwnerCopy: boolean
 }
 
 type DirectChatUserPromptInput = {
@@ -63,7 +66,25 @@ const CONTEXT_POLICY = `<context_policy>
 - 현재 대화에 직접 관련된 정보만 자연스럽게 사용하세요.
 - 과거 사실은 제공된 기억이나 대화 기록이 뒷받침할 때만 언급하고, 근거가 없으면 솔직하게 모른다고 답하세요.
 - 주인의 공개 닉네임과 공개 모먼트는 답변에 사용할 수 있지만, 비공개 대화와 내부 정보, 점수, 랭킹은 노출하지 마세요.
-</context_policy>`
+  </context_policy>`
+
+const LANGUAGE_LABELS: Record<string, string> = {
+  ko: '한국어',
+  en: 'English',
+  ja: '日本語',
+  zh: '中文',
+  fr: 'Français',
+  es: 'Español',
+  de: 'Deutsch',
+  pt: 'Português',
+  it: 'Italiano',
+  th: 'ไทย',
+  vi: 'Tiếng Việt',
+}
+
+function getLanguageLabel(locale: string): string {
+  return LANGUAGE_LABELS[locale] || locale
+}
 
 export function getDirectChatAvatarProfile(soulPrompt: string, mode: DirectChatMode): string {
   if (mode === 'OWNER_AVATAR') return soulPrompt.trim()
@@ -138,6 +159,9 @@ export function buildDirectChatSystemPrompt(input: DirectChatSystemPromptInput):
     mode,
     storeDetail,
     recalledRelationships,
+    targetLanguage,
+    ownerLanguage,
+    requiresOwnerCopy,
   } = input
   const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
   const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
@@ -198,10 +222,23 @@ ${recalledMemories.map((memory) => {
     ? `<avatar_profile>
 ${escapePromptData(avatarProfile)}
 </avatar_profile>\n\n`
-    : ''
+      : ''
+
+  const languagePolicy = requiresOwnerCopy
+    ? `<language_policy>
+- 반드시 순수 JSON 객체만 출력하세요. 설명, 마크다운, 코드블록, 앞뒤 문장은 금지합니다.
+- JSON 스키마는 정확히 { "content": "...", "content_owner": "..." } 입니다.
+- "content"는 ${getLanguageLabel(targetLanguage)}로 작성하세요.
+- "content_owner"는 ${getLanguageLabel(ownerLanguage)}로 작성하세요.
+- 두 필드는 같은 인격, 같은 의도, 같은 정보량을 유지해야 하며, 사후 요약이나 추가 설명을 만들지 마세요.
+</language_policy>`
+    : `<language_policy>
+- 답변은 반드시 ${getLanguageLabel(targetLanguage)}로만 작성하세요.
+- 설명, 마크다운, 코드블록 없이 모바일 메신저에 바로 표시될 일반 텍스트만 출력하세요.
+</language_policy>`
 
   return `${avatarProfileSection}<current_context>
-- 아바타 이름: ${escapePromptData(aiName)}
+  - 아바타 이름: ${escapePromptData(aiName)}
 - 현재 시각: ${date} ${time} (${dayOfWeek}요일)
 </current_context>
 
@@ -211,10 +248,11 @@ ${memorySection}
 ${recalledRelationshipsSection}
 ${ownerMomentSection}
 ${callerMomentSection}
-${interestSection}
+  ${interestSection}
 
-${CONTEXT_POLICY}
-${RESPONSE_POLICY}`
+  ${CONTEXT_POLICY}
+  ${languagePolicy}
+  ${RESPONSE_POLICY}`
 }
 
 export function buildDirectChatUserPrompt(input: DirectChatUserPromptInput): string {

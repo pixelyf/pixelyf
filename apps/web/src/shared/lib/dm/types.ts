@@ -9,7 +9,16 @@ export type DmRoomType = 'DM' | 'GROUP' | 'CS';
 export type DmParticipantRole = 'KEEPER' | 'MEMBER';
 
 /** 메시지 타입 */
-export type DmMessageType = 'TEXT' | 'IMAGE' | 'SYSTEM';
+export type DmMessageType = 'TEXT' | 'IMAGE' | 'SYSTEM' | 'AI_TEXT';
+
+export interface DmMessageTranslationData {
+  locale: string;
+  content: string;
+  status: string;
+  tokensUsed: number | null;
+  createdAt?: string | null;
+  updatedAt?: string | null;
+}
 
 /** 시스템 메시지 액션 코드 */
 export type SystemMessageAction =
@@ -57,12 +66,17 @@ export interface DmRoomData {
   /** 현재 참여자 수 (GROUP에서만 유의미) */
   participantCount: number;
   /** 마지막 메시지 */
-  lastMessage: {
-    id: string;
-    content: string;
-    createdAt: string;
-    type: string;
-  } | null;
+    lastMessage: {
+      id: string;
+      content: string;
+      originalContent?: string;
+      displayContent?: string;
+      displayLanguage?: string;
+      translationStatus?: string;
+      translations?: DmMessageTranslationData[];
+      createdAt: string;
+      type: string;
+    } | null;
   unreadCount: number;
   updatedAt: string | null;
 }
@@ -72,9 +86,14 @@ export interface DmRoomData {
 export interface DmMessageData {
   id: string;
   roomId: string;
-  senderId: string;
-  content: string;
-  images: string[];
+    senderId: string;
+    content: string;
+    originalContent?: string;
+    displayContent?: string;
+    displayLanguage?: string;
+    translationStatus?: string;
+    translations?: DmMessageTranslationData[];
+    images: string[];
   type: string;
   deletedAt: string | null;
   createdAt: string;

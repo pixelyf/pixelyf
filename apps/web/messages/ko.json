@@ -140,7 +140,7 @@
     "clusterUnlearn": "언러닝 성단",
     "clusterContinuous": "컨티뉴어스 성단",
     "clusterInsideRoom": "인사이드 룸",
-    "clusterSubscription": "단골 소식 성단",
+    "clusterSubscription": "구독 소식 성단",
     "clusterMood": "감정 은하",
     "trendingLabel": "Trending: \"{preview}\" — {galaxy}에서 {count}회 핑 수신",
     "sideDefaultName": "픽셀리어",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "지식그래프",
     "scopeAll": "전체 기록",
     "scopeMine": "내 기록",
-    "subscriptionGalaxy": "단골 소식 은하"
+    "subscriptionGalaxy": "구독 소식 은하"
   },
   "Supernova": {
     "title": "응원하기",
@@ -206,7 +206,7 @@
     "unlearnGalaxy": "언러닝 은하",
     "continuousGalaxy": "컨티뉴어스 은하",
     "insideRoom": "인사이드 룸",
-    "subscriptionGalaxy": "단골 소식 은하",
+    "subscriptionGalaxy": "구독 소식 은하",
     "resonatingUniverse": "공명하는 우주",
     "notification": "알림",
     "pingCancelFailed": "핑 취소에 실패했습니다. 다시 시도해주세요.",
@@ -749,12 +749,12 @@
     "bondAcceptMessage": "이제 서로의 별자리가 연결되었습니다.",
     "touchTitle": "{name}님이 당신의 픽셀을 터치했습니다",
     "touchMessage": "따뜻한 관심이 도착했습니다.",
-    "subRenewedTitle": "단골 등록이 자동 갱신되었습니다",
-    "subRenewedBody": "단골손님이 한 달 더 당신의 매장 소식을 받아봅니다.",
-    "subExpiredTitle": "단골 등록이 만료되었습니다",
-    "subExpiredBody": "잔고 부족으로 단골 등록이 만료되었습니다. 충전 후 다시 등록할 수 있습니다.",
-    "subRenewDesc": "단골 등록 자동 갱신 (대상: {creatorId})",
-    "subRevenueDesc": "단골 등록 자동 갱신 수익 (단골손님: {subscriberId})"
+    "subRenewedTitle": "구독이 자동 갱신되었습니다",
+    "subRenewedBody": "구독자가 한 달 더 당신의 매장 소식을 받아봅니다.",
+    "subExpiredTitle": "구독이 만료되었습니다",
+    "subExpiredBody": "잔고 부족으로 구독이 만료되었습니다. 충전 후 다시 구독할 수 있습니다.",
+    "subRenewDesc": "구독 자동 갱신 (대상: {creatorId})",
+    "subRevenueDesc": "구독 자동 갱신 수익 (구독자: {subscriberId})"
   },
   "Moods": {
     "happy": "행복",

@@ -258,7 +258,7 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
                       </div>
                       {room.lastMessage && (
                         <p className="text-[11px] text-white/50 truncate mt-0.5">
-                          {room.lastMessage.type === 'IMAGE' ? '(사진)' : room.lastMessage.content}
+                            {room.lastMessage.type === 'IMAGE' ? '(사진)' : (room.lastMessage.displayContent || room.lastMessage.content)}
                         </p>
                       )}
                     </div>

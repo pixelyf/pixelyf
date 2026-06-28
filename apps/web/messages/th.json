@@ -140,7 +140,7 @@
     "clusterUnlearn": "กระจุกดาวแห่งการลบล้างความคิด",
     "clusterContinuous": "กระจุกดาวแห่งการค้นพบ",
     "clusterInsideRoom": "ห้องแห่งห้วงคำนึง",
-    "clusterSubscription": "กลุ่มข่าวสารลูกค้าประจำ",
+    "clusterSubscription": "กลุ่มข่าวสารการติดตาม",
     "clusterMood": "กาแล็กซีแห่งอารมณ์",
     "trendingLabel": "กำลังมาแรง: \"{preview}\" — ได้รับ {count} Ping ใน {galaxy}",
     "sideDefaultName": "Pixelier",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "กราฟความคิด",
     "scopeAll": "บันทึกทั้งหมด",
     "scopeMine": "บันทึกของฉัน",
-    "subscriptionGalaxy": "กาแล็กซีข่าวสารลูกค้าประจำ"
+    "subscriptionGalaxy": "กาแล็กซีข่าวสารการติดตาม"
   },
   "Supernova": {
     "title": "สนับสนุน",
@@ -206,7 +206,7 @@
     "unlearnGalaxy": "กาแล็กซีแห่งการลบล้างความคิด",
     "continuousGalaxy": "กาแล็กซีแห่งการค้นพบ",
     "insideRoom": "ห้องแห่งห้วงคำนึง",
-    "subscriptionGalaxy": "กาแล็กซีการสมัครรับข้อมูล",
+    "subscriptionGalaxy": "กาแล็กซีข่าวสารการติดตาม",
     "resonatingUniverse": "จักรวาลแห่งความสอดคล้อง",
     "notification": "การแจ้งเตือน",
     "pingCancelFailed": "ยกเลิก Ping ไม่สำเร็จ กรุณาลองอีกครั้ง",

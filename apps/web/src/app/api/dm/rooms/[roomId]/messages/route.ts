@@ -4,6 +4,30 @@ import prisma from '@/shared/lib/prisma'
 import { sendNotification } from '@/shared/services/notificationService'
 import { ensureAiSoulAndKey } from '@/shared/lib/ai/activation'
 import { isAiDirectChatRoom } from '@/shared/lib/dm/roomSemantics'
+import { attachDmDisplayFields, normalizeDmLocale, truncateDmPreview } from '@/shared/lib/dm/messageDisplay'
+import { translateDmMessageForTargets } from '@/shared/lib/ai/dmBabelService'
+import {
+  assertActiveAiProviderKey,
+  assertNoUserBlockBetween,
+  type DmGuardResult,
+} from '@/shared/lib/dm/serverGuards'
+
+function guardToResponse(result: DmGuardResult) {
+  if (result.ok) return null
+  return NextResponse.json(
+    { error: result.error, code: result.code },
+    { status: result.status },
+  )
+}
+
+function isValidMessageImage(value: unknown): value is string {
+  if (typeof value !== 'string') return false
+  if (value.length === 0 || value.length > 4_000_000) return false
+  return value.startsWith('/')
+    || value.startsWith('https://')
+    || (process.env.NODE_ENV === 'development' && value.startsWith('http://'))
+    || /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/=]+$/i.test(value)
+}
 
 export async function GET(request: Request, props: { params: Promise<{ roomId: string }> }) {
   try {
@@ -30,9 +54,15 @@ export async function GET(request: Request, props: { params: Promise<{ roomId: s
       },
     });
 
-    if (!participant) {
-      return NextResponse.json({ error: 'Room not found or no access' }, { status: 404 })
-    }
+      if (!participant) {
+        return NextResponse.json({ error: 'Room not found or no access' }, { status: 404 })
+      }
+
+      const viewer = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { language: true },
+      })
+      const viewerLocale = normalizeDmLocale(viewer?.language)
 
     const messages = await prisma.dmMessage.findMany({
       where: { roomId, deletedAt: null },
@@ -65,7 +95,9 @@ export async function GET(request: Request, props: { params: Promise<{ roomId: s
     });
 
     const nextCursor = (messages.length === limit && messages.length > 0) ? messages[messages.length - 1].id : null;
-    const reversedMessages = [...messages].reverse();
+      const reversedMessages = [...messages]
+        .reverse()
+        .map((message) => attachDmDisplayFields(message, viewerLocale));
 
     return NextResponse.json({
       success: true,
@@ -90,18 +122,42 @@ export async function POST(request: Request, props: { params: Promise<{ roomId: 
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const params = await props.params;
-    const roomId = params.roomId;
-    const { content = '', type = 'TEXT', images = [] } = await request.json()
+      const params = await props.params;
+      const roomId = params.roomId;
+      const body = await request.json()
+      const type = typeof body.type === 'string' ? body.type : 'TEXT'
+      const content = typeof body.content === 'string' ? body.content.trim() : ''
+      const rawImages: unknown[] = Array.isArray(body.images) ? body.images : []
+      const images = rawImages.filter(isValidMessageImage)
 
-    if (type === 'IMAGE' && images.length > 10) {
-      return NextResponse.json({ error: 'Max 10 images allowed' }, { status: 400 })
-    }
+      if (type !== 'TEXT' && type !== 'IMAGE') {
+        return NextResponse.json({ error: 'Unsupported message type' }, { status: 400 })
+      }
 
-    const room = await prisma.dmRoom.findUnique({
-      where: { id: roomId },
-      select: { type: true, creatorId: true, maxParticipants: true }
-    });
+      if (type === 'TEXT' && !content) {
+        return NextResponse.json({ error: 'Message content is required' }, { status: 400 })
+      }
+
+      if (type === 'IMAGE' && (images.length === 0 || images.length > 10 || images.length !== rawImages.length)) {
+        return NextResponse.json({ error: 'Invalid image payload' }, { status: 400 })
+      }
+
+      const room = await prisma.dmRoom.findUnique({
+        where: { id: roomId },
+        select: {
+          type: true,
+          creatorId: true,
+          maxParticipants: true,
+          participants: {
+            select: {
+              id: true,
+              userId: true,
+              leftAt: true,
+              user: { select: { language: true } },
+            },
+          },
+        }
+      });
 
     if (!room) {
       return NextResponse.json({ error: 'Room not found' }, { status: 404 })
@@ -111,22 +167,50 @@ export async function POST(request: Request, props: { params: Promise<{ roomId: 
       return NextResponse.json({ error: 'Forbidden. Owner cannot write messages in CS room.' }, { status: 403 })
     }
 
-    const participant = await prisma.dmParticipant.findFirst({
-      where: {
-        roomId,
-        userId: user.id,
-      },
-    });
+      const participant = room.participants.find((roomParticipant) => roomParticipant.userId === user.id)
 
-    if (!participant) {
-      return NextResponse.json({ error: 'Room not found or no access' }, { status: 404 })
-    }
+      if (!participant) {
+        return NextResponse.json({ error: 'Room not found or no access' }, { status: 404 })
+      }
 
-    const lastMessagePreview = type === 'IMAGE' 
-      ? `사진 ${images && images.length > 0 ? images.length : 1}장` 
-      : content.slice(0, 100);
+      const senderLanguage = normalizeDmLocale(participant.user.language)
+      const otherParticipants = room.participants.filter((roomParticipant) => roomParticipant.userId !== user.id)
+      const partnerParticipant = otherParticipants[0] || null
+      const isAvatarDm = !partnerParticipant && room.maxParticipants === 1
+      const isAiDirectChat = isAiDirectChatRoom(room.type, isAvatarDm)
 
-    const message = await prisma.$transaction(async (tx) => {
+      if (partnerParticipant) {
+        const blockGuard = await assertNoUserBlockBetween(user.id, partnerParticipant.userId)
+        const blockGuardResponse = guardToResponse(blockGuard)
+        if (blockGuardResponse) return blockGuardResponse
+      }
+
+      if (room.type === 'DM' && !isAvatarDm) {
+        const senderKeyGuard = await assertActiveAiProviderKey(user.id)
+        const senderKeyGuardResponse = guardToResponse(senderKeyGuard)
+        if (senderKeyGuardResponse) return senderKeyGuardResponse
+
+        if (partnerParticipant) {
+          const partnerKeyGuard = await assertActiveAiProviderKey(partnerParticipant.userId)
+          const partnerKeyGuardResponse = guardToResponse(partnerKeyGuard)
+          if (partnerKeyGuardResponse) return partnerKeyGuardResponse
+        }
+      }
+
+      if (isAiDirectChat) {
+        const ownerUserId = isAvatarDm ? user.id : partnerParticipant?.userId
+        if (ownerUserId) {
+          const ownerKeyGuard = await assertActiveAiProviderKey(ownerUserId)
+          const ownerKeyGuardResponse = guardToResponse(ownerKeyGuard)
+          if (ownerKeyGuardResponse) return ownerKeyGuardResponse
+        }
+      }
+
+      const lastMessagePreview = type === 'IMAGE'
+        ? `사진 ${images && images.length > 0 ? images.length : 1}장`
+        : truncateDmPreview(content);
+
+      const message = await prisma.$transaction(async (tx) => {
       if (participant.leftAt) {
         await tx.dmParticipant.update({
           where: { id: participant.id },
@@ -146,6 +230,7 @@ export async function POST(request: Request, props: { params: Promise<{ roomId: 
           sender: {
             select: { id: true, display_name: true, avatar_image_url: true },
           },
+          translations: true,
         },
       });
 
@@ -182,37 +267,34 @@ export async function POST(request: Request, props: { params: Promise<{ roomId: 
         });
       }
 
-      return createdMessage;
-    });
+        return createdMessage;
+      });
 
-    // [Neural RAG] 상대가 AI Soul이고, CS 방이거나 아바타 대화방(나와 내 아바타의 대화)일 때만 비동기 대화 서비스 가동
-    try {
-      if (room && room.type !== 'GROUP') {
-        let partnerUserId: string | null = null
-        const partner = await prisma.dmParticipant.findFirst({
-          where: { roomId, userId: { not: user.id }, leftAt: null },
-          select: { userId: true }
+      let messageForDelivery = message
+      if (room.type === 'DM' && !isAvatarDm && type === 'TEXT') {
+        const translations = await translateDmMessageForTargets({
+          messageId: message.id,
+          content,
+          senderUserId: user.id,
+          sourceLanguage: senderLanguage,
+          targetLanguages: otherParticipants.map((roomParticipant) => roomParticipant.user.language),
         })
-        
-        const isAvatarDm = !partner && room.maxParticipants === 1
-        const isAiDirectChat = isAiDirectChatRoom(room.type, isAvatarDm)
+        messageForDelivery = { ...message, translations }
+      }
 
-        // CS 방이거나 내 아바타 대화방일 때만 챗봇 트리거 작동 (CS 방의 경우 송신자가 개설자인 경우에만 작동되도록 이중 안전장치 추가)
-        if (isAiDirectChat && (room.type !== 'CS' || user.id === room.creatorId)) {
-          if (partner) {
-            partnerUserId = partner.userId
-          } else {
-            // 상대방이 없다면(나와 내 아바타의 대화방인 경우), 나 자신을 파트너로 설정하여 내 AI 아바타를 소환
-            const selfParticipant = await prisma.dmParticipant.findFirst({
-              where: { roomId, userId: user.id, leftAt: null },
-              select: { userId: true }
-            })
-            if (selfParticipant) {
-              partnerUserId = selfParticipant.userId
-            }
-          }
+      const responseMessage = attachDmDisplayFields(messageForDelivery, senderLanguage)
 
-          if (partnerUserId) {
+      // [Neural RAG] 상대가 AI Soul이고, CS 방이거나 아바타 대화방(나와 내 아바타의 대화)일 때만 비동기 대화 서비스 가동
+      try {
+        if (room.type !== 'GROUP') {
+          // CS 방이거나 내 아바타 대화방일 때만 챗봇 트리거 작동 (CS 방의 경우 송신자가 개설자인 경우에만 작동되도록 이중 안전장치 추가)
+          if (isAiDirectChat && (room.type !== 'CS' || user.id === room.creatorId)) {
+            const partnerUserId = partnerParticipant?.userId || user.id
+            const ownerLanguage = normalizeDmLocale(
+              (isAvatarDm ? participant : partnerParticipant)?.user.language,
+            )
+
+            if (partnerUserId) {
             // ⚠️ [On-Demand 이중 가드] 기존 개설 방의 경우에도 AI Soul이 유실되어 있다면 송신 시점에 온디맨드 활성화
             let aiSoul = await prisma.aiSoul.findUnique({
               where: { userId: partnerUserId },
@@ -235,9 +317,13 @@ export async function POST(request: Request, props: { params: Promise<{ roomId: 
               const directChatMode = isAvatarDm ? 'OWNER_AVATAR' : 'VISITOR_AVATAR'
               // 비동기 실행 (메시지 응답 속도에 영향 없음)
               import('@/shared/lib/ai/directChatService')
-                .then(({ triggerDirectChat }) =>
-                  triggerDirectChat(aiSoul.id, user.id, roomId, content, directChatMode)
-                )
+                  .then(({ triggerDirectChat }) =>
+                    triggerDirectChat(aiSoul.id, user.id, roomId, content, directChatMode, {
+                      targetLanguage: senderLanguage,
+                      ownerLanguage,
+                      ownerUserId: partnerUserId,
+                    })
+                  )
                 .catch(err => console.error('[AI DirectChat] non-critical:', err))
             }
           }
@@ -302,25 +388,30 @@ export async function POST(request: Request, props: { params: Promise<{ roomId: 
       const broadcastChannel = adminSupabase.channel(`dm-room-${roomId}`)
       await broadcastChannel.send({
         type: 'broadcast',
-        event: 'new-message',
-        payload: {
-          id: message.id,
-          roomId: message.roomId,
-          senderId: message.senderId,
-          content: message.content,
-          images: message.images,
-          type: message.type,
-          deletedAt: message.deletedAt,
-          createdAt: message.createdAt.toISOString(),
-          sender: message.sender,
-        },
-      })
+          event: 'new-message',
+          payload: {
+            id: responseMessage.id,
+            roomId: responseMessage.roomId,
+            senderId: responseMessage.senderId,
+            content: responseMessage.content,
+            originalContent: responseMessage.originalContent,
+            displayContent: responseMessage.displayContent,
+            displayLanguage: responseMessage.displayLanguage,
+            translationStatus: responseMessage.translationStatus,
+            translations: responseMessage.translations,
+            images: responseMessage.images,
+            type: responseMessage.type,
+            deletedAt: responseMessage.deletedAt,
+            createdAt: responseMessage.createdAt.toISOString(),
+            sender: responseMessage.sender,
+          },
+        })
       // adminSupabase.removeChannel(broadcastChannel) // [조기 소멸 차단] REST 전송 버퍼가 완전히 게이트웨이에 도달하기 전에 파이프라인이 소멸되는 것을 방지합니다.
     } catch (broadcastErr) {
       console.error('[DM] Broadcast failed (non-critical):', broadcastErr)
     }
 
-    return NextResponse.json({ success: true, data: { message } })
+      return NextResponse.json({ success: true, data: { message: responseMessage } })
   } catch (error) {
     console.error('Create DM Message Error:', error)
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })

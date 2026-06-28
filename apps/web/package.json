@@ -8,7 +8,7 @@
     "start": "NODE_OPTIONS='--max-http-header-size=65536' next start -p 3200",
     "lint": "eslint",
     "test:direct-chat-prompt": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/shared/lib/ai/directChatPrompt.test.ts",
-    "test:contracts": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/shared/lib/ai/directChatPrompt.test.ts src/shared/lib/ai/memoryPolicy.test.ts src/shared/lib/ai/memoryRetrievalSql.test.ts src/shared/lib/dm/roomSemantics.test.ts"
+    "test:contracts": "node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test src/shared/lib/ai/directChatPrompt.test.ts src/shared/lib/ai/memoryPolicy.test.ts src/shared/lib/ai/memoryRetrievalSql.test.ts src/shared/lib/dm/roomSemantics.test.ts src/shared/lib/dm/messageDisplay.test.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed-galaxies.ts"

@@ -140,7 +140,7 @@
     "clusterUnlearn": "Ammasso del Disapprendimento",
     "clusterContinuous": "Ammasso Continuo",
     "clusterInsideRoom": "Stanza Interiore",
-    "clusterSubscription": "Cluster notizie clienti abituali",
+    "clusterSubscription": "Cluster notizie abbonati",
     "clusterMood": "Galassia Emotiva",
     "trendingLabel": "In tendenza: \"{preview}\" — Ha ricevuto {count} Ping in {galaxy}",
     "sideDefaultName": "Pixelier",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "Grafico del Pensiero",
     "scopeAll": "Tutte le registrazioni",
     "scopeMine": "Le mie registrazioni",
-    "subscriptionGalaxy": "Galassia notizie clienti abituali"
+    "subscriptionGalaxy": "Galassia notizie abbonati"
   },
   "Supernova": {
     "title": "Supporta",
@@ -206,7 +206,7 @@
     "unlearnGalaxy": "Galassia del Disapprendimento",
     "continuousGalaxy": "Galassia Continua",
     "insideRoom": "Stanza Interiore",
-    "subscriptionGalaxy": "Galassia degli Abbonamenti",
+    "subscriptionGalaxy": "Galassia notizie abbonati",
     "resonatingUniverse": "Universo Risonante",
     "notification": "Notifiche",
     "pingCancelFailed": "Impossibile annullare il Ping. Riprova.",

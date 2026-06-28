@@ -134,7 +134,12 @@ export function DmRoomDrawer({
     }
   }, [])
   
-  const { isPartnerTyping, sendTyping } = useDmRealtime({ roomId, currentUserId: userProfile?.id, onAiReply });
+  const { isPartnerTyping, sendTyping } = useDmRealtime({
+    roomId,
+    currentUserId: userProfile?.id,
+    currentLanguage: userProfile?.language,
+    onAiReply,
+  });
 
   const { data: roomData, isLoading: isRoomLoading, error: roomError } = useSWR<{ data: { room: RoomDetailResponse } }>(
     `/api/dm/rooms/${roomId}`,
@@ -205,12 +210,17 @@ export function DmRoomDrawer({
 
     // 낙관적 업데이트
     const tempId = `temp-${Date.now()}`
-    const optimisticMsg: DmMessageData = {
-      id: tempId,
-      roomId,
-      senderId: userProfile?.id as string,
-      content: textToSend,
-      images: [],
+      const optimisticMsg: DmMessageData = {
+        id: tempId,
+        roomId,
+        senderId: userProfile?.id as string,
+        content: textToSend,
+        originalContent: textToSend,
+        displayContent: textToSend,
+        displayLanguage: userProfile?.language || 'ko',
+        translationStatus: 'original',
+        translations: [],
+        images: [],
       type: 'TEXT',
       createdAt: new Date().toISOString(),
       deletedAt: null,
@@ -241,12 +251,12 @@ export function DmRoomDrawer({
           aiTypingTimerRef.current = null
         }, 15_000)
       }
-    } catch (e) {
-      console.error(e)
-      setInputText(textToSend)
-      alert('메시지 전송에 실패했습니다. 네트워크를 확인해주세요.')
-      mutate()
-    } finally {
+      } catch (e) {
+        console.error(e)
+        setInputText(textToSend)
+        alert(e instanceof Error ? e.message : '메시지 전송에 실패했습니다. 네트워크를 확인해주세요.')
+        mutate()
+      } finally {
       setIsSending(false)
     }
   }
@@ -318,12 +328,13 @@ export function DmRoomDrawer({
   const renderMessage = (msg: DmMessageData, showTime: boolean, isUnread: boolean) => {
     const isMe = msg.senderId === userProfile?.id && msg.type !== 'AI_TEXT'
     const isAiMessage = msg.type === 'AI_TEXT'
+    const messageText = msg.displayContent || msg.content
 
     if (msg.type === 'SYSTEM') {
       return (
         <div key={msg.id} className="flex justify-center my-2">
           <span className="text-[11px] text-white/30 bg-white/5 px-3 py-1 rounded-full">
-            {msg.content}
+              {messageText}
           </span>
         </div>
       )
@@ -378,7 +389,7 @@ export function DmRoomDrawer({
               )}
             </div>
             <div className="p-3 bg-indigo-500 text-white rounded-2xl rounded-br-sm">
-              <p className="text-sm break-words whitespace-pre-wrap">{msg.content}</p>
+                  <p className="text-sm break-words whitespace-pre-wrap">{messageText}</p>
             </div>
           </div>
         ) : (
@@ -397,7 +408,7 @@ export function DmRoomDrawer({
             )}
             <div className="flex items-end gap-1.5">
               <div className="p-3 bg-white/10 text-white rounded-2xl rounded-bl-sm">
-                <p className="text-sm break-words whitespace-pre-wrap">{msg.content}</p>
+                <p className="text-sm break-words whitespace-pre-wrap">{messageText}</p>
               </div>
               {showTime && (
                 <span className="text-[9px] text-white/30 shrink-0 select-none mb-0.5 tabular-nums">

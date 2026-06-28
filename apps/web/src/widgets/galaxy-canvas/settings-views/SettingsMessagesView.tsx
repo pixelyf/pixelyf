@@ -31,12 +31,13 @@ interface RoomItem {
   name: string | null
   avatarUrl: string | null
   participantCount: number
-  lastMessage: {
-    id: string
-    content: string
-    createdAt: string
-    type: string
-  } | null
+    lastMessage: {
+      id: string
+      content: string
+      displayContent?: string
+      createdAt: string
+      type: string
+    } | null
   unreadCount: number
   updatedAt: string | null
 }
@@ -178,15 +179,16 @@ export function SettingsMessagesView() {
               : resolveDisplay(room.partner, isSelfChat)
 
             // 마지막 메시지 미리보기
-            let preview = ''
-            if (room.lastMessage) {
-              if (room.lastMessage.type === 'SYSTEM') {
-                preview = `📢 ${room.lastMessage.content}`
-              } else if (room.lastMessage.type === 'AI_TEXT') {
-                preview = `🤖 ${room.lastMessage.content}`
-              } else {
-                preview = room.lastMessage.content
-              }
+              let preview = ''
+              if (room.lastMessage) {
+                const previewContent = room.lastMessage.displayContent || room.lastMessage.content
+                if (room.lastMessage.type === 'SYSTEM') {
+                  preview = `📢 ${previewContent}`
+                } else if (room.lastMessage.type === 'AI_TEXT') {
+                  preview = `🤖 ${previewContent}`
+                } else {
+                  preview = previewContent
+                }
               if (preview.length > 40) preview = preview.slice(0, 40) + '…'
             }
 

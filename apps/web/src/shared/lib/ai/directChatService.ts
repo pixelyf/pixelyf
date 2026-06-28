@@ -11,6 +11,7 @@
 
 // Direct chat memories now start as RAW pending memories and promote only after reflection/evidence.
 import prisma from '@/shared/lib/prisma'
+import { attachDmDisplayFields, normalizeDmLocale, truncateDmPreview } from '@/shared/lib/dm/messageDisplay'
 import { callLLM, callEmbedding } from './llm'
 import { resolveApiKeyByUserId, evaluateImportance } from './compaction'
 import { COMPACTION_MODELS } from './modelSelector'
@@ -26,6 +27,7 @@ import {
 import { buildMemoryWritePlan } from './memoryWriteGate'
 import { buildDirectChatSystemPrompt, buildDirectChatUserPrompt } from './directChatPrompt'
 import { detectRelationshipIntent, retrieveRelatedMoments } from './relationshipRetriever'
+import { upsertDmMessageTranslation } from './dmBabelService'
 
 export type { DirectChatMode } from './memoryPolicy'
 
@@ -44,12 +46,53 @@ type DirectChatMemory = {
   vectorScore?: number
 }
 
+type DirectChatLanguageOptions = {
+  targetLanguage?: string | null
+  ownerLanguage?: string | null
+  ownerUserId?: string | null
+}
+
 function readPositiveIntEnv(name: string, fallback: number) {
   const parsed = parseInt(process.env[name] || '', 10)
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
 }
 
 const DIRECT_CHAT_HYBRID_POOL_LIMIT = readPositiveIntEnv('AI_DIRECT_CHAT_HYBRID_POOL_LIMIT', 64)
+
+function stripJsonFence(rawContent: string): string {
+  const trimmed = rawContent.trim()
+  if (!trimmed.startsWith('```')) return trimmed
+  return trimmed
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim()
+}
+
+function parseDirectChatReply(
+  rawContent: string,
+  requiresOwnerCopy: boolean,
+): { content: string; ownerContent: string | null } {
+  const trimmedContent = rawContent.trim()
+  if (!requiresOwnerCopy) {
+    return { content: trimmedContent, ownerContent: null }
+  }
+
+  try {
+    const parsed = JSON.parse(stripJsonFence(trimmedContent)) as {
+      content?: unknown
+      content_owner?: unknown
+    }
+    const content = typeof parsed.content === 'string' ? parsed.content.trim() : ''
+    const ownerContent = typeof parsed.content_owner === 'string' ? parsed.content_owner.trim() : ''
+    if (content && ownerContent) {
+      return { content, ownerContent }
+    }
+  } catch (error) {
+    console.error('[DirectChat] content_owner JSON parse failed:', error)
+  }
+
+  return { content: trimmedContent, ownerContent: null }
+}
 
 /**
  * [Direct-RAG] 1:1 대화 전용 경량 RAG 검색
@@ -96,7 +139,8 @@ export async function triggerDirectChat(
   userId: string,  // 대화 상대방 userId
   roomId: string,
   userMessage: string,
-  mode: DirectChatMode
+  mode: DirectChatMode,
+  languageOptions: DirectChatLanguageOptions = {},
 ): Promise<void> {
   const processStartTime = Date.now()
   console.log(`\n\x1b[36m========== 🚀 [DirectChat Debug] 대화 프로세스 개시 ==========`)
@@ -109,10 +153,10 @@ export async function triggerDirectChat(
   try {
     // 1. 중복 호출 방어: lastActiveAt 기반 락
     console.log(`[DirectChat Step 1] AI Soul 조회 시작... (soulId: ${soulId})`)
-    const soul = await prisma.aiSoul.findUnique({
-      where: { id: soulId },
-      select: { lastActiveAt: true, soulPrompt: true, userId: true, user: { select: { display_name: true } } }
-    })
+      const soul = await prisma.aiSoul.findUnique({
+        where: { id: soulId },
+        select: { lastActiveAt: true, soulPrompt: true, userId: true, user: { select: { display_name: true, language: true } } }
+      })
     if (!soul) {
       console.log(`\x1b[31m[DirectChat Error] AI Soul을 찾을 수 없습니다. soulId=${soulId}\x1b[0m`)
       return
@@ -243,11 +287,11 @@ export async function triggerDirectChat(
       prisma.userPersona.findUnique({
         where: { user_id: userId },
         select: { interest_tags: true }
-      }),
-      prisma.user.findUnique({
-        where: { id: userId },
-        select: { display_name: true }
-      }),
+        }),
+        prisma.user.findUnique({
+          where: { id: userId },
+          select: { display_name: true, language: true }
+        }),
       prisma.userCoordinate.findMany({
         where: { userId: soul.userId, galaxyKey: { in: ['PIXELYF_CORE', 'PIXELYF'] } },
         select: { galaxyKey: true, display_name: true }
@@ -272,9 +316,16 @@ export async function triggerDirectChat(
     const callerName = callerCoords.find(c => c.galaxyKey === 'PIXELYF')?.display_name
       || callerProfile?.display_name || '상대방'
     const aiName = soul.user?.display_name || 'Pixelyf AI'
-    const ownerDisplayName = ownerCoords.find(c => c.galaxyKey === 'PIXELYF')?.display_name
-      || soul.user?.display_name || '알 수 없음'
-    console.log(`[DirectChat Info] Caller Name: "${callerName}", Owner Name: "${ownerDisplayName}", AI Name: "${aiName}"`)
+      const ownerDisplayName = ownerCoords.find(c => c.galaxyKey === 'PIXELYF')?.display_name
+        || soul.user?.display_name || '알 수 없음'
+      const targetLanguage = normalizeDmLocale(languageOptions.targetLanguage || callerProfile?.language)
+      const ownerLanguage = normalizeDmLocale(languageOptions.ownerLanguage || soul.user?.language)
+      const ownerUserId = languageOptions.ownerUserId || soul.userId
+      const requiresOwnerCopy = mode === 'VISITOR_AVATAR'
+        && ownerUserId !== userId
+        && targetLanguage !== ownerLanguage
+      console.log(`[DirectChat Info] Caller Name: "${callerName}", Owner Name: "${ownerDisplayName}", AI Name: "${aiName}"`)
+      console.log(`[DirectChat Info] Language Contract: target=${targetLanguage}, owner=${ownerLanguage}, ownerCopy=${requiresOwnerCopy}`)
 
     console.log(`[DirectChat Step 4c] DirectChat 모드 판정: ${mode}`)
 
@@ -315,10 +366,13 @@ export async function triggerDirectChat(
       ownerPublicMoments,
       persona,
       now,
-      mode,
-      storeDetail,
-      recalledRelationships,
-    })
+        mode,
+        storeDetail,
+        recalledRelationships,
+        targetLanguage,
+        ownerLanguage,
+        requiresOwnerCopy,
+      })
     const userPrompt = buildDirectChatUserPrompt({
       recentMessages: chronologicalMessages,
       callerUserId: userId,
@@ -337,15 +391,16 @@ export async function triggerDirectChat(
     try {
       llmResult = await callLLM({
         apiKey,
-        provider,
-        model: targetModel, // Flash 모델 사용
-        systemPrompt,
-        userPrompt,
-        responseFormat: 'text',
-        temperature: 0.7,
-        maxOutputTokens: 512,
-        thinkingBudget: 0
-      })
+          provider,
+          model: targetModel, // Flash 모델 사용
+          systemPrompt,
+          userPrompt,
+          responseFormat: requiresOwnerCopy ? 'json' : 'text',
+          temperature: 0.7,
+          maxOutputTokens: requiresOwnerCopy ? 1024 : 512,
+          thinkingBudget: 0,
+          userId: soul.userId,
+        })
       const llmDuration = Date.now() - llmStartTime
       console.log(`[DirectChat Info] LLM 응답 수신 완료! 소요시간: ${llmDuration}ms, 응답 길이: ${llmResult.content.length}자`)
     } catch (llmErr) {
@@ -354,24 +409,56 @@ export async function triggerDirectChat(
     }
 
     // 7. DM 답장 작성
-    const replyContent = llmResult.content.trim()
-    console.log(`\x1b[32m[DirectChat Debug] 아바타 답변 본문: "${replyContent}"\x1b[0m`)
+      const parsedReply = parseDirectChatReply(llmResult.content, requiresOwnerCopy)
+      const replyContent = parsedReply.content
+      console.log(`\x1b[32m[DirectChat Debug] 아바타 답변 본문: "${replyContent}"\x1b[0m`)
     
     console.log(`[DirectChat Step 6] DB에 DM 메시지(type: AI_TEXT) 생성 시작...`)
-    const newMessage = await prisma.dmMessage.create({
-      data: {
-        roomId,
-        senderId: soul.userId, // AI Soul의 userId로 메시지 전송
-        content: replyContent,
+      let newMessage = await prisma.dmMessage.create({
+        data: {
+          roomId,
+          senderId: soul.userId, // AI Soul의 userId로 메시지 전송
+          content: replyContent,
         type: 'AI_TEXT',      
       },
       include: {
-        sender: {
-          select: { id: true, display_name: true, avatar_image_url: true },
+          sender: {
+            select: { id: true, display_name: true, avatar_image_url: true },
+          },
+          translations: true,
         },
-      },
-    })
-    console.log(`[DirectChat Info] DB 메시지 작성 완료. ID: ${newMessage.id}`)
+      })
+      console.log(`[DirectChat Info] DB 메시지 작성 완료. ID: ${newMessage.id}`)
+
+      if (requiresOwnerCopy && parsedReply.ownerContent) {
+        await upsertDmMessageTranslation({
+          messageId: newMessage.id,
+          locale: ownerLanguage,
+          content: parsedReply.ownerContent,
+          status: 'completed',
+          tokensUsed: llmResult.usage.totalTokens,
+        })
+        const refreshedMessage = await prisma.dmMessage.findUnique({
+          where: { id: newMessage.id },
+          include: {
+            sender: {
+              select: { id: true, display_name: true, avatar_image_url: true },
+            },
+            translations: true,
+          },
+        })
+        if (refreshedMessage) newMessage = refreshedMessage
+      }
+
+      await prisma.dmRoom.update({
+        where: { id: roomId },
+        data: {
+          lastMessageAt: newMessage.createdAt,
+          lastMessagePreview: truncateDmPreview(replyContent),
+        },
+      })
+
+      const broadcastMessage = attachDmDisplayFields(newMessage, targetLanguage)
 
     // [Realtime Broadcast] 아바타의 실시간 메시지를 브로드캐스트 채널로 송출
     console.log(`[DirectChat Step 7] Supabase Realtime Broadcast 송출 준비...`)
@@ -385,12 +472,17 @@ export async function triggerDirectChat(
         type: 'broadcast',
         event: 'new-message',
         payload: {
-          id: newMessage.id,
-          roomId: newMessage.roomId,
-          senderId: newMessage.senderId,
-          content: newMessage.content,
-          images: newMessage.images,
-          type: newMessage.type,
+            id: newMessage.id,
+            roomId: newMessage.roomId,
+            senderId: newMessage.senderId,
+            content: newMessage.content,
+            originalContent: broadcastMessage.originalContent,
+            displayContent: broadcastMessage.displayContent,
+            displayLanguage: broadcastMessage.displayLanguage,
+            translationStatus: broadcastMessage.translationStatus,
+            translations: broadcastMessage.translations,
+            images: newMessage.images,
+            type: newMessage.type,
           deletedAt: newMessage.deletedAt,
           createdAt: newMessage.createdAt.toISOString(),
           sender: newMessage.sender,

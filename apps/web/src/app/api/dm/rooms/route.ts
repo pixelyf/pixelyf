@@ -2,23 +2,43 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/shared/lib/supabase/server'
 import prisma from '@/shared/lib/prisma'
 import { ensureAiSoulAndKey } from '@/shared/lib/ai/activation'
+import { attachDmDisplayFields, normalizeDmLocale, truncateDmPreview } from '@/shared/lib/dm/messageDisplay'
+import {
+  assertActiveAiProviderKey,
+  assertNoUserBlockBetween,
+  type DmGuardResult,
+} from '@/shared/lib/dm/serverGuards'
 
 // ══════════════════════════════════════════════════════════════
 // GET /api/dm/rooms — 내가 참여한 채팅방 목록 (1:1 DM + 그룹)
 // POST /api/dm/rooms — 새 채팅방 생성 (1:1 DM 또는 그룹)
 // ══════════════════════════════════════════════════════════════
 
+function guardToResponse(result: DmGuardResult) {
+  if (result.ok) return null
+  return NextResponse.json(
+    { error: result.error, code: result.code },
+    { status: result.status },
+  )
+}
+
 export async function GET() {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+      if (!user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      }
 
-    // 내가 참여한 채팅방 조회 (leftAt이 null인 방만)
-    const participations = await prisma.dmParticipant.findMany({
+      const viewer = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { language: true },
+      })
+      const viewerLocale = normalizeDmLocale(viewer?.language)
+
+      // 내가 참여한 채팅방 조회 (leftAt이 null인 방만)
+      const participations = await prisma.dmParticipant.findMany({
       where: {
         userId: user.id,
         leftAt: null,
@@ -26,11 +46,11 @@ export async function GET() {
       include: {
         room: {
           include: {
-            messages: {
-              take: 1,
-              orderBy: { createdAt: 'desc' },
-              select: { id: true, content: true, createdAt: true, type: true },
-            },
+              messages: {
+                take: 1,
+                orderBy: { createdAt: 'desc' },
+                include: { translations: true },
+              },
             participants: {
               where: { leftAt: null },
               include: {
@@ -79,19 +99,24 @@ export async function GET() {
       // 현재 활성 참여자 수
       const participantCount = room.participants.length
 
-      return {
-        id: room.id,
-        type: room.type as 'DM' | 'GROUP' | 'CS',
-        partner,
+        const lastMessage = room.messages[0]
+          ? attachDmDisplayFields(room.messages[0], viewerLocale)
+          : null
+
+        return {
+          id: room.id,
+          type: room.type as 'DM' | 'GROUP' | 'CS',
+          partner,
         name: room.name,
         avatarUrl: room.avatarUrl,
         participantCount,
-        lastMessage: room.messages[0]
-          ? {
-              ...room.messages[0],
-              content: room.lastMessagePreview || room.messages[0].content,
-            }
-          : null,
+          lastMessage: lastMessage
+            ? {
+                ...lastMessage,
+                content: room.lastMessagePreview || truncateDmPreview(lastMessage.content),
+                displayContent: truncateDmPreview(lastMessage.displayContent),
+              }
+            : null,
         unreadCount: p.unreadCount,
         updatedAt: room.lastMessageAt,
       }
@@ -142,15 +167,19 @@ async function handleCreateDm(
 
   const isAvatarDm = targetUserId === currentUserId
 
-  if (isAvatarDm) {
-    // ⚠️ [On-Demand] 내 아바타 대화방 최초 개설 시 나 자신의 AI Soul 확보
-    try {
-      await ensureAiSoulAndKey(currentUserId)
+    if (isAvatarDm) {
+      // ⚠️ [On-Demand] 내 아바타 대화방 최초 개설 시 나 자신의 AI Soul 확보
+      try {
+        await ensureAiSoulAndKey(currentUserId)
     } catch (err) {
-      console.error('[AiSoul On-Demand Create Failed] for Owner:', err)
-    }
+        console.error('[AiSoul On-Demand Create Failed] for Owner:', err)
+      }
 
-    // 기존 나와 내 아바타의 1:1 대화방(참여자가 오직 나 혼자이며, maxParticipants가 1인 DM방) 확인
+      const keyGuard = await assertActiveAiProviderKey(currentUserId)
+      const keyGuardResponse = guardToResponse(keyGuard)
+      if (keyGuardResponse) return keyGuardResponse
+
+      // 기존 나와 내 아바타의 1:1 대화방(참여자가 오직 나 혼자이며, maxParticipants가 1인 DM방) 확인
     const existingRoom = await prisma.dmRoom.findFirst({
       where: {
         type: 'DM',
@@ -182,13 +211,31 @@ async function handleCreateDm(
   }
 
   // ⚠️ [On-Demand] 일반 고객이 고객문의(CS) 방 최초 개설 시 대상 매장 점주의 AI Soul 확보
-  if (type === 'CS') {
-    try {
-      await ensureAiSoulAndKey(targetUserId)
-    } catch (err) {
-      console.error('[AiSoul On-Demand Create Failed] for Store Owner:', err)
+    if (type === 'CS') {
+      try {
+        await ensureAiSoulAndKey(targetUserId)
+      } catch (err) {
+        console.error('[AiSoul On-Demand Create Failed] for Store Owner:', err)
+      }
+
+      const ownerKeyGuard = await assertActiveAiProviderKey(targetUserId)
+      const ownerKeyGuardResponse = guardToResponse(ownerKeyGuard)
+      if (ownerKeyGuardResponse) return ownerKeyGuardResponse
     }
-  }
+
+    const blockGuard = await assertNoUserBlockBetween(currentUserId, targetUserId)
+    const blockGuardResponse = guardToResponse(blockGuard)
+    if (blockGuardResponse) return blockGuardResponse
+
+    if (type === 'DM') {
+      const currentUserKeyGuard = await assertActiveAiProviderKey(currentUserId)
+      const currentUserKeyGuardResponse = guardToResponse(currentUserKeyGuard)
+      if (currentUserKeyGuardResponse) return currentUserKeyGuardResponse
+
+      const targetUserKeyGuard = await assertActiveAiProviderKey(targetUserId)
+      const targetUserKeyGuardResponse = guardToResponse(targetUserKeyGuard)
+      if (targetUserKeyGuardResponse) return targetUserKeyGuardResponse
+    }
 
   // 기존 1:1 채팅방 확인 (나간 방이더라도 기존 방이 있으며 타입이 일치할 때 재사용하여 대화 내용 보존)
   const existingParticipation = await prisma.dmParticipant.findFirst({

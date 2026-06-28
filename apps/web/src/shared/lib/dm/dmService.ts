@@ -80,16 +80,19 @@ export const dmService = {
     content: string,
     type: string = 'TEXT',
     images: string[] = []
-  ): Promise<DmMessageData> {
-    const res = await fetch(`/api/dm/rooms/${roomId}/messages`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, type, images }),
-    });
-    if (!res.ok) throw new Error('Failed to send message');
-    const json = await res.json();
-    return json.data.message;
-  },
+    ): Promise<DmMessageData> {
+      const res = await fetch(`/api/dm/rooms/${roomId}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, type, images }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(err.error || 'Failed to send message');
+      }
+      const json = await res.json();
+      return json.data.message;
+    },
 
   async markAsRead(roomId: string): Promise<void> {
     const res = await fetch(`/api/dm/rooms/${roomId}/read`, { method: 'POST' });

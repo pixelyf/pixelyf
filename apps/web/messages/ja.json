@@ -140,7 +140,7 @@
     "clusterUnlearn": "アンラーニング星団",
     "clusterContinuous": "コンティニュアス星団",
     "clusterInsideRoom": "インサイドルーム",
-    "clusterSubscription": "常連情報星団",
+    "clusterSubscription": "購読情報星団",
     "clusterMood": "感情の銀河",
     "trendingLabel": "Trending: \"{preview}\" — {galaxy}で{count}回のPingを受信",
     "sideDefaultName": "ピクセリアー",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "知識グラフ",
     "scopeAll": "すべての記録",
     "scopeMine": "私の記録",
-    "subscriptionGalaxy": "常連情報銀河"
+    "subscriptionGalaxy": "購読情報銀河"
   },
   "Supernova": {
     "title": "応援する",
@@ -206,7 +206,7 @@
     "unlearnGalaxy": "アンラーニング銀河",
     "continuousGalaxy": "コンティニュアス銀河",
     "insideRoom": "インサイドルーム",
-    "subscriptionGalaxy": "思考サブスク銀河",
+    "subscriptionGalaxy": "購読情報銀河",
     "resonatingUniverse": "共鳴する宇宙",
     "notification": "通知",
     "pingCancelFailed": "Pingの取り消しに失敗しました。再試行してください。",

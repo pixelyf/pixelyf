@@ -5,11 +5,13 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 import { createClient } from '@/shared/lib/supabase/browser';
 import { dmService } from './dmService';
 import type { DmMessageData, DmRoomData } from './types';
+import { getDmDisplayFields } from './messageDisplay';
 
 
 interface UseDmRealtimeOptions {
   roomId: string;
   currentUserId?: string;
+  currentLanguage?: string;
   enabled?: boolean;
   /** AI 아바타 응답 수신 시 호출되는 콜백 (타이핑 인디케이터 해제용) */
   onAiReply?: () => void;
@@ -25,7 +27,7 @@ interface UseDmRealtimeOptions {
  * 
  * broadcast는 JWT/RLS 불필요 → postgres_changes보다 안정적
  */
-export function useDmRealtime({ roomId, currentUserId, enabled = true, onAiReply }: UseDmRealtimeOptions) {
+export function useDmRealtime({ roomId, currentUserId, currentLanguage, enabled = true, onAiReply }: UseDmRealtimeOptions) {
   const channelRef = useRef<RealtimeChannel | null>(null);
   const retryCountRef = useRef(0);
   // onAiReply를 ref로 안정적으로 참조 (클로저 stale 방지)
@@ -33,8 +35,11 @@ export function useDmRealtime({ roomId, currentUserId, enabled = true, onAiReply
   onAiReplyRef.current = onAiReply;
 
   // currentUserId를 ref로 참조 (Effect 재실행 방지)
-  const currentUserIdRef = useRef(currentUserId);
-  currentUserIdRef.current = currentUserId;
+    const currentUserIdRef = useRef(currentUserId);
+    currentUserIdRef.current = currentUserId;
+
+    const currentLanguageRef = useRef(currentLanguage);
+    currentLanguageRef.current = currentLanguage;
 
   // 상대방 타이핑 상태
   const [isPartnerTyping, setIsPartnerTyping] = useState(false);
@@ -82,21 +87,37 @@ export function useDmRealtime({ roomId, currentUserId, enabled = true, onAiReply
           const msg = payload.payload as {
             id: string;
             roomId: string;
-            senderId: string;
-            content: string;
-            images: string[] | null;
-            type: string;
+              senderId: string;
+              content: string;
+              originalContent?: string;
+              displayContent?: string;
+              displayLanguage?: string;
+              translationStatus?: string;
+              translations?: DmMessageData['translations'];
+              images: string[] | null;
+              type: string;
             deletedAt: string | null;
             createdAt: string;
             sender?: { id: string; display_name: string; avatar_image_url: string | null };
-          };
-          
-          const transformedMessage: DmMessageData = {
-            id: msg.id,
-            roomId: msg.roomId,
-            senderId: msg.senderId,
-            content: msg.content,
-            images: msg.images || [],
+            };
+
+            const displayFields = getDmDisplayFields(
+              msg.content,
+              msg.translations || [],
+              currentLanguageRef.current,
+            );
+
+            const transformedMessage: DmMessageData = {
+              id: msg.id,
+              roomId: msg.roomId,
+              senderId: msg.senderId,
+              content: msg.content,
+              originalContent: msg.originalContent || msg.content,
+              displayContent: displayFields.displayContent,
+              displayLanguage: displayFields.displayLanguage,
+              translationStatus: displayFields.translationStatus,
+              translations: displayFields.translations,
+              images: msg.images || [],
             type: msg.type,
             deletedAt: msg.deletedAt,
             createdAt: msg.createdAt,

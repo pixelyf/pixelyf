@@ -140,7 +140,7 @@
     "clusterUnlearn": "Unlearning Cluster",
     "clusterContinuous": "Continuous Cluster",
     "clusterInsideRoom": "Inside Room",
-    "clusterSubscription": "Regular Customer Cluster",
+    "clusterSubscription": "Subscription Cluster",
     "clusterMood": "Emotion Galaxy",
     "trendingLabel": "Trending: \"{preview}\" — Received {count} pings in {galaxy}",
     "sideDefaultName": "Pixelier",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "Knowledge Graph",
     "scopeAll": "All Records",
     "scopeMine": "My Records",
-    "subscriptionGalaxy": "Regular Customer Galaxy"
+    "subscriptionGalaxy": "Subscription Galaxy"
   },
   "Supernova": {
     "title": "Cheer",
@@ -205,7 +205,7 @@
     "unlearnGalaxy": "Unlearning Galaxy",
     "continuousGalaxy": "Continuous Galaxy",
     "insideRoom": "Inside Room",
-    "subscriptionGalaxy": "Thought Subscription Galaxy",
+    "subscriptionGalaxy": "Subscription Galaxy",
     "resonatingUniverse": "Resonating Universe",
     "notification": "Notification",
     "pingCancelFailed": "Failed to cancel ping. Please try again.",
@@ -749,12 +749,12 @@
     "bondAcceptMessage": "Your constellations are now connected.",
     "touchTitle": "{name} touched your pixel",
     "touchMessage": "Warm attention has arrived.",
-    "subRenewedTitle": "Regular registration auto-renewed",
-    "subRenewedBody": "A regular customer renewed their registration to your store for another month.",
-    "subExpiredTitle": "Regular registration expired",
+    "subRenewedTitle": "Subscription auto-renewed",
+    "subRenewedBody": "A subscriber renewed their subscription to your thought space for another month.",
+    "subExpiredTitle": "Subscription expired",
     "subExpiredBody": "Your subscription expired due to insufficient balance. You can subscribe again after recharging.",
-    "subRenewDesc": "Regular registration auto-renewal (Target: {creatorId})",
-    "subRevenueDesc": "Regular registration auto-renewal revenue (Regular Customer: {subscriberId})"
+    "subRenewDesc": "Subscription auto-renewal (Target: {creatorId})",
+    "subRevenueDesc": "Subscription auto-renewal revenue (Subscriber: {subscriberId})"
   },
   "Moods": {
     "happy": "Happy",

@@ -230,8 +230,8 @@ export async function resolveApiKey(soulId: string): Promise<{ apiKey: string; p
   try {
     const apiKey = decryptApiKey(providerKey.apiKeyEncrypted)
     return { apiKey, provider: providerKey.provider as AiProvider }
-  } catch (decryptErr: any) {
-    throw new Error(`[resolveApiKey Decryption Error] API 키 복호화 실패: ${decryptErr.message}. userId=${soul.userId}`)
+  } catch {
+    throw new Error(`[resolveApiKey Decryption Error] API 키 복호화 실패. userId=${soul.userId}`)
   }
 }
 
@@ -254,8 +254,8 @@ export async function resolveApiKeyByUserId(
   try {
     const apiKey = decryptApiKey(providerKey.apiKeyEncrypted)
     return { apiKey, provider: providerKey.provider as AiProvider }
-  } catch (decryptErr: any) {
-    throw new Error(`[resolveApiKeyByUserId Decryption Error] API 키 복호화 실패: ${decryptErr.message}. userId=${userId}`)
+  } catch {
+    throw new Error(`[resolveApiKeyByUserId Decryption Error] API 키 복호화 실패. userId=${userId}`)
   }
 }
 

@@ -140,7 +140,7 @@
     "clusterUnlearn": "反向学习星团",
     "clusterContinuous": "持续探索星团",
     "clusterInsideRoom": "内在空间",
-    "clusterSubscription": "熟客消息星团",
+    "clusterSubscription": "订阅消息星团",
     "clusterMood": "情绪星系",
     "trendingLabel": "Trending: \"{preview}\" — 在 {galaxy} 收到 {count} 次 Ping",
     "sideDefaultName": "像素居民",
@@ -170,7 +170,7 @@
     "viewThoughtGraph": "知识图谱",
     "scopeAll": "全部记录",
     "scopeMine": "我的记录",
-    "subscriptionGalaxy": "熟客消息银河"
+    "subscriptionGalaxy": "订阅消息星河"
   },
   "Supernova": {
     "title": "应援",
@@ -206,7 +206,7 @@
     "unlearnGalaxy": "反向学习星系",
     "continuousGalaxy": "持续探索星系",
     "insideRoom": "内在空间",
-    "subscriptionGalaxy": "思想订阅星系",
+    "subscriptionGalaxy": "订阅消息星河",
     "resonatingUniverse": "共鸣的宇宙",
     "notification": "通知",
     "pingCancelFailed": "取消 Ping 失败，请重试。",

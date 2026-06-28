@@ -13,7 +13,7 @@ import type { AiProvider } from './provider'
 
 // ─── 타입 정의 ───────────────────────────────────────────────
 
-export type TranslationContext = 'feed' | 'category' | 'profile' | 'comment'
+export type TranslationContext = 'feed' | 'category' | 'profile' | 'comment' | 'dm'
 
 /** 번역 요청 파라미터 */
 export interface BabelTranslateParams {
@@ -87,9 +87,11 @@ export async function translateBabelContent(
     contextSystemInstruction = `당신은 SNS의 생생한 댓글 피드백 작성가입니다. 구어체의 생생한 리액션과 구문, 친근한 대화 톤을 고스란히 현지화하세요.`
   } else if (context === 'category') {
     contextSystemInstruction = `당신은 글로벌 서비스 기획자입니다. 단어나 뱃지 형태의 명사를 군더더기 없이 고도로 간결하고(Concise), 표준적이며, 직관적인 서비스 기그/카테고리 다국어 명칭으로 매핑하세요. 필요 없는 기교나 과도한 어구 설명은 배제하고, 단일 명사 혹은 극히 짧은 2~3단어 이내의 구문으로만 표현하세요.`
-  } else if (context === 'profile') {
-    contextSystemInstruction = `당신은 사용자의 개성 넘치는 글로벌 프로필 상태 메시지 작성가입니다. 자기소개 및 상태 텍스트의 개성, 재치, 분위기를 해당 국가의 네이티브 화자가 즐겨 쓰는 문장으로 우아하게 현지화하세요.`
-  }
+    } else if (context === 'profile') {
+      contextSystemInstruction = `당신은 사용자의 개성 넘치는 글로벌 프로필 상태 메시지 작성가입니다. 자기소개 및 상태 텍스트의 개성, 재치, 분위기를 해당 국가의 네이티브 화자가 즐겨 쓰는 문장으로 우아하게 현지화하세요.`
+    } else if (context === 'dm') {
+      contextSystemInstruction = `당신은 모바일 1:1 메신저 대화 현지화 전문가입니다. 원문의 친밀도, 말투, 호칭, 이모지, 줄바꿈을 보존하되 대상 언어의 실제 대화처럼 자연스럽게 작성하세요.`
+    }
 
   const systemPrompt = `당신은 고도의 다국어 콘텐츠 현지화 전문가입니다.
 아래 원문 필드셋을 분석하고, 각 대상 언어의 네이티브 화자가 서비스에 맞게 자연스럽게 작성한 것처럼 해당 언어로 필드셋 전체를 작성하세요.
