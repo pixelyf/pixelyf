@@ -70,11 +70,11 @@ self.onmessage = (e: MessageEvent) => {
       if (nodeDegrees[tId] !== undefined) nodeDegrees[tId]++;
     });
 
-    // 2. D3 노드 초기 좌표: 넓게 무작위 분산 (대칭성 깨기)
+    // 2. D3 노드 초기 좌표: 캐시가 존재하는 경우 오프셋 차감 후 반영, 없으면 넓게 무작위 분산
     const d3Nodes: GraphNode[] = nodes.map((n: any) => ({
       id: n.id,
-      x: (Math.random() - 0.5) * 800,
-      y: (Math.random() - 0.5) * 800,
+      x: n.x !== undefined ? n.x - centerX : (Math.random() - 0.5) * 800,
+      y: n.y !== undefined ? n.y - centerY : (Math.random() - 0.5) * 800,
       category: n.category
     }));
 
@@ -105,9 +105,15 @@ self.onmessage = (e: MessageEvent) => {
       self.postMessage({ type: 'TICK', coords });
     });
 
-    // 5. 시뮬레이션 자연 수렴 시 알림
+    // 5. 시뮬레이션 자연 수렴 시 알림 및 최종 좌표 캐시 백업용 전송
     simulation.on("end", () => {
       console.log("[ThoughtGraphWorker] D3-Force simulation converged (Les Miserables config).");
+      const coords = d3Nodes.map(n => ({
+        id: n.id,
+        x: (n.x || 0) + centerX,
+        y: (n.y || 0) + centerY
+      }));
+      self.postMessage({ type: 'END', coords });
     });
 
   } else if (type === 'STOP') {

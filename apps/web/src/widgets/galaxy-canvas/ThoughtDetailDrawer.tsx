@@ -20,9 +20,11 @@ import { useUserStore } from '@/entities/user/model/useUserStore'
 import { useTranslations, useLocale } from 'next-intl'
 import { usePanelResizable } from '@/shared/hooks/usePanelResizable'
 import { MobileFullPopupWrapper } from '@/shared/ui/MobileFullPopupWrapper'
+import { galaxyConfirm } from '@/stores/dialogStore'
 
 export function ThoughtDetailDrawer() {
   const t = useTranslations('ThoughtGraph')
+  const tCommon = useTranslations('Common')
   const locale = useLocale()
 
   const relationLabels = useMemo<Record<string, { label: string; emoji: string; color: string }>>(() => ({
@@ -131,6 +133,13 @@ export function ThoughtDetailDrawer() {
   const handleSynthesize = useCallback(async () => {
     if (!selectedNode || connectedItems.length === 0) return
 
+    const confirmMessage = t('synthesizeConfirm') || '선택한 생각들을 바탕으로 AI 지식 합성을 진행하시겠습니까?\n(AI API 호출에 따른 토큰 비용이 발생할 수 있습니다.)';
+    const isOk = await galaxyConfirm({
+      title: tCommon('confirm'),
+      message: confirmMessage,
+    })
+    if (!isOk) return
+
     setIsSynthesizing(true)
     try {
       const nodeIds = [selectedNode.id, ...connectedItems.map(item => item.peerNode?.id).filter(Boolean)]
@@ -235,7 +244,7 @@ export function ThoughtDetailDrawer() {
 
               <div className="flex-1 min-w-0">
                 <h3 className="text-white font-bold text-[16px] leading-tight break-words">
-                  {selectedNode.summary || '생각 별'}
+                  {selectedNode.summary || t('drawerTitle')}
                 </h3>
                 <div className="flex items-center gap-2 mt-1.5">
                   <span className="text-white/50 text-[12px]">{selectedNode.displayName}</span>
@@ -364,7 +373,7 @@ export function ThoughtDetailDrawer() {
 
                         {/* 본문 전문 */}
                         <p className="text-[14px] text-white/80 leading-relaxed whitespace-pre-wrap break-words">
-                          {peerNode.content || peerNode.summary || '생각 별'}
+                          {peerNode.content || peerNode.summary || t('drawerTitle')}
                         </p>
                       </div>
                     )

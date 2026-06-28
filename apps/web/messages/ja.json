@@ -807,7 +807,8 @@
     "pegasus": "ペガスス座"
   },
   "ThoughtGraph": {
-    "drawerTitle": "記録詳細",
+    "drawerTitle": "ナレッジグラフ",
+    "synthesizeConfirm": "選択した考えに基づいてAI知識合成を実行しますか？\n（AI API呼び出しによるトークン費用が発生する場合があります。）",
     "connectedThoughts": "接続された記録 ({count})",
     "noConnectedThoughts": "接続された記録がまだありません",
     "connectMyThought": "記録を接続する",

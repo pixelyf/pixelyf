@@ -176,11 +176,9 @@ export class ThoughtGraphRenderer {
     this.categoryLabelsContainer.removeChildren();
     this.categoryLabelsMap.clear();
 
-    const isMineScope = useGalaxyStore.getState().thoughtScope === 'mine';
-    this.categoryLabelsContainer.visible = !isMineScope;
+    this.categoryLabelsContainer.visible = true;
 
-    if (!isMineScope) {
-      const seenCategories = new Set<string>();
+    const seenCategories = new Set<string>();
       nodes.forEach(n => { if (n.category) seenCategories.add(n.category); });
       seenCategories.forEach(cat => {
         const koLabel = CATEGORY_KOREAN_LABELS[cat] || cat;
@@ -209,7 +207,6 @@ export class ThoughtGraphRenderer {
         this.categoryLabelsContainer.addChild(catText);
         this.categoryLabelsMap.set(cat, catText);
       });
-    }
 
 
     // ── [레퍼런스 정합] 컬러풀 원형 도트 노드 생성 ──
@@ -388,9 +385,7 @@ export class ThoughtGraphRenderer {
 
   /** 카테고리 라벨 위치 및 역스케일링 업데이트 (수학적 IQR 이상치 제거 및 Lerp 보간 + 거리 점프 격벽 필터 탑재) */
   private updateCategoryLabels(zoom: number) {
-    const isMineScope = useGalaxyStore.getState().thoughtScope === 'mine';
-    this.categoryLabelsContainer.visible = !isMineScope;
-    if (isMineScope) return;
+    this.categoryLabelsContainer.visible = true;
 
     // [고스트 라벨 방어 격벽] 좌표 계산 개시 전 모든 카테고리 라벨을 일괄 비활성화 (노드 수 0개인 카테고리의 잔상 원천 격리)
     this.categoryLabelsMap.forEach(label => { label.visible = false; });

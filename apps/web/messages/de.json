@@ -807,7 +807,8 @@
     "pegasus": "Pegasus"
   },
   "ThoughtGraph": {
-    "drawerTitle": "Details zur Aufzeichnung",
+    "drawerTitle": "Wissensgraph",
+    "synthesizeConfirm": "Möchten Sie mit der KI-Wissenssynthese basierend auf den ausgewählten Gedanken fortfahren?\n(Durch KI-API-Aufrufe können Token-Kosten entstehen.)",
     "connectedThoughts": "Verbundene Aufzeichnungen ({count})",
     "noConnectedThoughts": "Noch keine verbundenen Aufzeichnungen",
     "connectMyThought": "Aufzeichnungen verbinden",

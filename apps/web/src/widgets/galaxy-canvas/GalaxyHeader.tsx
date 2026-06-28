@@ -219,11 +219,15 @@ export function GalaxyHeader({ onSearch, title, hideSwitcher, onMenuOpen, onSear
     return (
       <>
       <header ref={headerRef} className="pointer-events-auto w-full shrink-0 z-[40] flex items-center justify-between px-4 h-14 backdrop-blur-md" style={{ backgroundColor: 'var(--color-midnight-ink)', borderBottom: '1px solid var(--color-slate-edge)' }}>
-        {/* 좌측: 로고 + 이름 */}
-        <div className="flex items-center gap-[5px]">
+        <button
+          onClick={() => {
+            window.location.href = '/'
+          }}
+          className="flex items-center gap-[5px] active:scale-95 transition-transform"
+        >
           <Logo size="sm" animate={false} />
           <LogoText size="sm" />
-        </div>
+        </button>
 
         {/* 우측: 🔍 + 👤 + ☰ */}
         <div className="flex items-center gap-1.5">
@@ -300,18 +304,7 @@ export function GalaxyHeader({ onSearch, title, hideSwitcher, onMenuOpen, onSear
       <button
         data-tour="logo"
         onClick={() => {
-          const currentGalaxy = dynamicGalaxies.find(g => g.key === galaxyKey)
-          const center = currentGalaxy ? { x: currentGalaxy.centerX, y: currentGalaxy.centerY } : { x: 0, y: 0 }
-          useGalaxyStore.getState().focusOnPosition(
-            center.x * VISUAL_SCALE,
-            center.y * VISUAL_SCALE,
-            CAMERA_ZOOM.GALAXY_OVERVIEW
-          )
-          // [FIX] SEO URL 정리: pixel/feed 등 쿼리 파라미터 제거
-          const cleanUrl = window.location.pathname // locale prefix 포함되어도 안전 (쿼리 파라미터만 제거)
-          window.history.replaceState({}, '', cleanUrl)
-          // 선택된 픽셀 해제 (사이드 패널 닫기)
-          useGalaxyStore.getState().selectPixel(null)
+          window.location.href = '/'
         }}
         className="flex items-center gap-3 shrink-0 group cursor-pointer"
       >

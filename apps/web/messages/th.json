@@ -807,7 +807,8 @@
     "pegasus": "กลุ่มดาวม้าบิน"
   },
   "ThoughtGraph": {
-    "drawerTitle": "รายละเอียดบันทึก",
+    "drawerTitle": "กราฟความรู้",
+    "synthesizeConfirm": "คุณต้องการดำเนินการสังเคราะห์ความรู้ด้วย AI ตามความคิดที่เลือกหรือไม่?\n(อาจมีค่าใช้จ่ายโทเค็นเนื่องจากการเรียก AI API)",
     "connectedThoughts": "บันทึกที่เชื่อมต่อ ({count})",
     "noConnectedThoughts": "ยังไม่มีบันทึกที่เชื่อมต่อ",
     "connectMyThought": "เชื่อมต่อบันทึก",

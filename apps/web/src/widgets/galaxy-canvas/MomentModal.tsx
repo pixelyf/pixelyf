@@ -35,6 +35,7 @@ export function MomentModal({ isOpen, onClose, bgColor }: { isOpen: boolean; onC
   const reviewTargetPixelId = useGalaxyStore(s => s.reviewTargetPixelId)
   const setReviewTargetPixelId = useGalaxyStore(s => s.setReviewTargetPixelId)
   const [connectedMoments, setConnectedMoments] = useState<any[]>([])
+  const [isSynthesisMode, setIsSynthesisMode] = useState(false)
   const [isConnectPanelOpen, setIsConnectPanelOpen] = useState(false)
   const [recommendedMoments, setRecommendedMoments] = useState<any[]>([])
   const [isRecommending, setIsRecommending] = useState(false)
@@ -108,6 +109,7 @@ export function MomentModal({ isOpen, onClose, bgColor }: { isOpen: boolean; onC
   useEffect(() => {
     if (isOpen && synthesizedDraft) {
       setContent(synthesizedDraft)
+      setIsSynthesisMode(true)
       // 바로 스토어 임시 상태 청소하여 유저 수동 타이핑 도중 재덮어쓰기 방지
       setSynthesizedDraft(null)
     }
@@ -164,6 +166,7 @@ export function MomentModal({ isOpen, onClose, bgColor }: { isOpen: boolean; onC
     setTags([])
     setTagInput('')
     setIsCategoryDropdownOpen(false)
+    setIsSynthesisMode(false)
     onClose()
   }
 
@@ -577,19 +580,24 @@ export function MomentModal({ isOpen, onClose, bgColor }: { isOpen: boolean; onC
               </div>
             )}
 
-            <div className="relative">
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value.slice(0, 500))}
-                maxLength={500}
-                placeholder={t('placeholder')}
-                className="w-full h-32 bg-slate-950/50 border border-slate-800 rounded-2xl p-4 pb-8 text-[15px] leading-relaxed text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none transition-all"
-                disabled={isSubmitting}
-              />
-              <div className={`absolute bottom-3 right-4 text-xs font-medium transition-colors ${content.length >= 500 ? 'text-red-400' : 'text-slate-500'}`}>
-                {content.length} / 500
-              </div>
-            </div>
+            {(() => {
+              const maxContentLength = isSynthesisMode ? 3000 : 500;
+              return (
+                <div className="relative">
+                  <textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value.slice(0, maxContentLength))}
+                    maxLength={maxContentLength}
+                    placeholder={t('placeholder')}
+                    className="w-full h-32 bg-slate-950/50 border border-slate-800 rounded-2xl p-4 pb-8 text-[15px] leading-relaxed text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none transition-all"
+                    disabled={isSubmitting}
+                  />
+                  <div className={`absolute bottom-3 right-4 text-xs font-medium transition-colors ${content.length >= maxContentLength ? 'text-red-400' : 'text-slate-500'}`}>
+                    {content.length} / {maxContentLength}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* 3.5. 태그 입력 (선택) */}
             <div className="space-y-2.5 pt-2">

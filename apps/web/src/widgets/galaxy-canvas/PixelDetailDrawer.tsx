@@ -1690,7 +1690,7 @@ export function PixelDetailDrawer() {
           </div>
           <div
             key={selectedPixelId || "empty"}
-            className={`flex-1 overflow-y-auto py-5 flex flex-col gap-6 ${isMobile ? "px-4 no-scrollbar" : "pl-4 pr-1.5 custom-scrollbar"}`}
+            className={`flex-1 overflow-y-auto overflow-x-hidden py-5 flex flex-col gap-6 ${isMobile ? "px-4 no-scrollbar" : "pl-4 pr-1.5 custom-scrollbar"}`}
             ref={panelRef}
           >
             <AnimatePresence mode="wait">
@@ -2800,7 +2800,7 @@ export function PixelDetailDrawer() {
                                 <div
                                   ref={categoryScrollRef}
                                   onWheel={handleCategoryWheel}
-                                  className="flex items-center gap-1.5 overflow-x-auto no-scrollbar -mx-4 px-4 pb-[1px] scroll-smooth"
+                                  className={`flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-[1px] scroll-smooth ${isMobile ? "-mx-4 px-4" : "ml-[-16px] mr-[-6px] pl-[16px] pr-[6px]"}`}
                                 >
                                   {/* [전체] 탭 */}
                                   <button

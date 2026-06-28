@@ -807,7 +807,8 @@
     "pegasus": "Pégase"
   },
   "ThoughtGraph": {
-    "drawerTitle": "Détails de l'enregistrement",
+    "drawerTitle": "Graphe de connaissances",
+    "synthesizeConfirm": "Voulez-vous procéder à la synthèse des connaissances par l'IA basée sur les pensées sélectionnées ?\n(Des coûts de jetons peuvent survenir en raison des appels à l'API de l'IA.)",
     "connectedThoughts": "Enregistrements connectés ({count})",
     "noConnectedThoughts": "Pas encore d'enregistrements connectés",
     "connectMyThought": "Connecter les enregistrements",

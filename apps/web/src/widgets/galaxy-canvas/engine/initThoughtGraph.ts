@@ -93,38 +93,98 @@ export function initThoughtGraph(config: ThoughtGraphConfig): {
       thoughtGraphRenderer.setVisible(isGraph)
 
       if (isGraph) {
-        // D3 시뮬레이션용 데이터 렌더링 (아웃라이어 픽셀 이탈 방지를 위해 날것의 노드 데이터 주입)
-        thoughtGraphRenderer.renderData(nodes, edges, pixiApp)
-
         // 현재 은하의 물리적 중심 좌표 계산 (기본 확대 50% 포커싱 연출용)
         const currentGalaxyKey = useGalaxyStore.getState().galaxyKey
+        const thoughtScope = useGalaxyStore.getState().thoughtScope
         const center = GALAXY_CENTERS[currentGalaxyKey] || { x: 0, y: 0 }
 
         // 생각 은하 기본 확대 비율 50% (0.5)로 카메라 줌 변경 및 은하 중심 포커스!
         camera.moveTo(center.x * VISUAL_SCALE, center.y * VISUAL_SCALE, 0.4)
         camera.zoomTo(0.35, 0.4)
 
-        // Web Worker 시뮬레이션 시작
-        if (!thoughtWorkerRef.current) {
-          thoughtWorkerRef.current = new Worker(
-            new URL('../../../shared/lib/thought-graph/ThoughtGraphWorker.ts', import.meta.url)
-          )
-          thoughtWorkerRef.current.onmessage = (event) => {
-            const { type, coords } = event.data
-            if (type === 'TICK') {
-              const currentZoom = camera.viewport.zoom
-              thoughtRendererRef.current?.updatePositions(coords, currentZoom)
+        // 1. 캐시 점검 및 증분 유효성 판단
+        const cacheKey = `tg-layout:${currentGalaxyKey}:${thoughtScope}`
+        const cachedLayoutStr = localStorage.getItem(cacheKey)
+        let cachedCoordsMap: Record<string, { x: number; y: number }> | null = null
+        let allNodesCached = false
+
+        if (cachedLayoutStr) {
+          try {
+            cachedCoordsMap = JSON.parse(cachedLayoutStr)
+            if (cachedCoordsMap && nodes.length > 0) {
+              allNodesCached = nodes.every((n: any) => cachedCoordsMap![n.id] !== undefined)
             }
+          } catch (e) {
+            console.error('[ThoughtGraph] Layout cache parse error:', e)
           }
         }
 
-        thoughtWorkerRef.current.postMessage({
-          type: 'INIT',
-          nodes,
-          edges,
-          centerX: center.x * VISUAL_SCALE,
-          centerY: center.y * VISUAL_SCALE
-        })
+        // 2. 만약 모든 노드가 캐싱되어 있다면 시뮬레이션을 가동하지 않고 즉시 렌더링
+        if (allNodesCached && cachedCoordsMap) {
+          const currentZoom = camera.viewport.zoom
+          const coords = nodes.map((n: any) => ({
+            id: n.id,
+            x: cachedCoordsMap![n.id].x,
+            y: cachedCoordsMap![n.id].y
+          }))
+          // 렌더러에 좌표와 데이터 주입
+          const nodesWithCoords = nodes.map((n: any) => ({
+            ...n,
+            x: cachedCoordsMap![n.id].x,
+            y: cachedCoordsMap![n.id].y
+          }))
+          thoughtGraphRenderer.renderData(nodesWithCoords, edges, pixiApp)
+          thoughtGraphRenderer.updatePositions(coords, currentZoom)
+
+          // 켜져있던 웹워커 스레드가 있다면 해제 (연산 0% 바이패스 완료)
+          if (thoughtWorkerRef.current) {
+            thoughtWorkerRef.current.postMessage({ type: 'STOP' })
+            thoughtWorkerRef.current.terminate()
+            thoughtWorkerRef.current = null
+          }
+        } else {
+          // 3. 일부 노드가 캐시에 없거나 캐시가 비어 있는 경우 -> D3 시뮬레이션 구동 (증분)
+          const nodesWithInitialPositions = nodes.map((n: any) => {
+            if (cachedCoordsMap && cachedCoordsMap[n.id]) {
+              return {
+                ...n,
+                x: cachedCoordsMap[n.id].x,
+                y: cachedCoordsMap[n.id].y
+              }
+            }
+            return n
+          })
+
+          // 렌더러 초기 렌더링 (캐시 주입 상태로 1차 고정)
+          thoughtGraphRenderer.renderData(nodesWithInitialPositions, edges, pixiApp)
+
+          if (!thoughtWorkerRef.current) {
+            thoughtWorkerRef.current = new Worker(
+              new URL('../../../shared/lib/thought-graph/ThoughtGraphWorker.ts', import.meta.url)
+            )
+            thoughtWorkerRef.current.onmessage = (event) => {
+              const { type, coords } = event.data
+              if (type === 'TICK') {
+                const currentZoom = camera.viewport.zoom
+                thoughtRendererRef.current?.updatePositions(coords, currentZoom)
+              } else if (type === 'END') {
+                const map: Record<string, { x: number; y: number }> = {}
+                coords.forEach((c: any) => {
+                  map[c.id] = { x: c.x, y: c.y }
+                })
+                localStorage.setItem(cacheKey, JSON.stringify(map))
+              }
+            }
+          }
+
+          thoughtWorkerRef.current.postMessage({
+            type: 'INIT',
+            nodes: nodesWithInitialPositions,
+            edges,
+            centerX: center.x * VISUAL_SCALE,
+            centerY: center.y * VISUAL_SCALE
+          })
+        }
       } else {
         // 복귀 시 시뮬레이션 정지 및 스레드 해제
         if (thoughtWorkerRef.current) {

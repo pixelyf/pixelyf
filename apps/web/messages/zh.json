@@ -807,7 +807,8 @@
     "pegasus": "飞马座"
   },
   "ThoughtGraph": {
-    "drawerTitle": "记录详情",
+    "drawerTitle": "知识图谱",
+    "synthesizeConfirm": "是否基于所选想法进行AI知识合成？\n（可能会因AI API调用产生Token费用。）",
     "connectedThoughts": "已连接的记录 ({count})",
     "noConnectedThoughts": "尚无已连接的记录",
     "connectMyThought": "连接记录",

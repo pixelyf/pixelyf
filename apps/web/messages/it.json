@@ -807,7 +807,8 @@
     "pegasus": "Pegaso"
   },
   "ThoughtGraph": {
-    "drawerTitle": "Dettagli della registrazione",
+    "drawerTitle": "Grafo della conoscenza",
+    "synthesizeConfirm": "Vuoi procedere con la sintesi della conoscenza AI basata sui pensieri selezionati?\n(Potrebbero verificarsi costi di token dovuti alle chiamate API AI.)",
     "connectedThoughts": "Registrazioni connesse ({count})",
     "noConnectedThoughts": "Ancora nessuna registrazione connessa",
     "connectMyThought": "Connetti registrazioni",

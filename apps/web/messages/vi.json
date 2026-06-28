@@ -807,7 +807,8 @@
     "pegasus": "Phi Mã"
   },
   "ThoughtGraph": {
-    "drawerTitle": "Chi tiết ghi chép",
+    "drawerTitle": "Biểu đồ tri thức",
+    "synthesizeConfirm": "Bạn có muốn tiếp tục tổng hợp tri thức AI dựa trên các ý nghĩ đã chọn không?\n(Có thể phát sinh chi phí mã thông báo do các cuộc gọi API AI.)",
     "connectedThoughts": "Ghi chép đã kết nối ({count})",
     "noConnectedThoughts": "Chưa có ghi chép kết nối nào",
     "connectMyThought": "Kết nối ghi chép",

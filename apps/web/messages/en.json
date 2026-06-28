@@ -807,7 +807,8 @@
     "pegasus": "Pegasus"
   },
   "ThoughtGraph": {
-    "drawerTitle": "Record Detail",
+    "drawerTitle": "Knowledge Graph",
+    "synthesizeConfirm": "Do you want to proceed with AI knowledge synthesis based on the selected thoughts?\n(Token costs may occur due to AI API calls.)",
     "connectedThoughts": "Connected Records ({count})",
     "noConnectedThoughts": "No connected records yet",
     "connectMyThought": "Connect Records",

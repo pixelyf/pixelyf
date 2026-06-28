@@ -61,7 +61,6 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
   const isPixiReady = useGalaxyStore(s => s.isPixiReady)
   const activeDmRoomId = useGalaxyStore(s => s.activeDmRoomId)
   const selectedPixelId = useGalaxyStore(s => s.selectedPixelId)
-  const targetFeedItem = useGalaxyStore(s => s.targetFeedItem)
   
   const router = useRouter()
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false)
@@ -95,6 +94,7 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
         } else router.push('/')
       } else if (detail === 'feed' || detail === 'home') {
         setViewMode('feed')
+        useGalaxyStore.getState().selectPixel(null)
         if (isSettingsOpen) {
           useGalaxyStore.getState().setIsSettingsOpen(false)
           router.back()
@@ -102,6 +102,7 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
         window.dispatchEvent(new CustomEvent('SWITCH_FEED_SCOPE', { detail: 'global' }))
       } else if (detail === 'bonds') {
         setViewMode('feed')
+        useGalaxyStore.getState().selectPixel(null)
         if (isSettingsOpen) {
           useGalaxyStore.getState().setIsSettingsOpen(false)
           router.back()
@@ -262,7 +263,7 @@ export function MobileGalaxyLayout({ partnerCode }: MobileGalaxyLayoutProps) {
         {viewMode === 'feed' && (
           <>
             <SearchFeedDrawer />
-            {selectedPixelId && targetFeedItem && <PixelDetailDrawer />}
+            {selectedPixelId && <PixelDetailDrawer />}
           </>
         )}
 
